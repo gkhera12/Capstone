@@ -1,12 +1,26 @@
 package com.example.eightleaves.comedybox;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridView;
+import android.widget.Toast;
+
+import com.example.eightleaves.comedybox.adapter.CBAdapter;
+import com.example.eightleaves.comedybox.data.CBContract;
+import com.example.eightleaves.comedybox.data.CBDataUpdator;
+import com.example.eightleaves.comedybox.data.models.Comedy;
+import com.example.eightleaves.comedybox.events.EventExecutor;
+import com.example.eightleaves.comedybox.events.GetComedyDataEvent;
+import com.example.eightleaves.comedybox.otto.ComedyBus;
 
 
 /**
@@ -17,7 +31,12 @@ import android.view.ViewGroup;
  * Use the {@link MainFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MainFragment extends Fragment {
+public class MainFragment extends Fragment  implements LoaderManager.LoaderCallbacks<Cursor>{
+
+    private GridView gridView;
+    private CBAdapter cbAdapter;
+    private static final int COMEDY_LOADER =0;
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -28,6 +47,21 @@ public class MainFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    static final int COL_COMEDY_ID = 0;
+    private static final int COL_COMEDY_COMEDY_ID = 1;
+    public static final int COL_COMEDY_POSTER_PATH = 2;
+    static final int COL_COMEDY_TITLE = 3;
+    static final int COL_COMEDY_RELEASE_DATE = 4;
+    static final int COL_COMEDY_OVERVIEW = 5;
+    static final int COL_SORT_SETTING = 6;
+    private static final String[] COMEDY_COLUMNS = {
+            CBContract.ComedyEntry.TABLE_NAME + "." + CBContract.ComedyEntry._ID,
+            CBContract.ComedyEntry.COLUMN_COMEDY_ID,
+            CBContract.ComedyEntry.COLUMN_POSTER_PATH,
+
+
+    };
 
     public MainFragment() {
         // Required empty public constructor
@@ -58,13 +92,34 @@ public class MainFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        getLoaderManager().initLoader(COMEDY_LOADER, null, this);
+        updateComedyBox();
+    }
+
+    private void updateComedyBox() {
+        EventExecutor executor = new EventExecutor(getContext());
+        CBDataUpdator udpator = new CBDataUpdator(getContext());
+        GetComedyDataEvent event = new GetComedyDataEvent();
+        ComedyBus.getInstance().post(event);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.comedy_fragment, container, false);
+        cbAdapter = new CBAdapter(getActivity(),null);
+        cbAdapter.notifyDataSetChanged();
+
+        View rootView = inflater.inflate(R.layout.comedy_fragment, container, false);
+        gridView = (GridView) rootView.findViewById(R.id.gridview);
+        gridView.setAdapter(cbAdapter);
+        return  rootView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -89,6 +144,29 @@ public class MainFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        String sortOrder = CBContract.ComedyEntry.COLUMN_COMEDY_ID + " ASC";
+        Uri movieForSortSettingUri = CBContract.ComedyEntry.buildComedySort(
+                "popular");
+        return new CursorLoader(getActivity(),movieForSortSettingUri,COMEDY_COLUMNS,null,null,sortOrder);
+
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        if(data == null || data.getCount()==0){
+            Toast.makeText(getContext(),"No data available, Try changing the Sort Order",
+                    Toast.LENGTH_SHORT).show();
+        }
+        cbAdapter.swapCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        cbAdapter.swapCursor(null);
     }
 
     /**

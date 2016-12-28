@@ -7,7 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.example.eightleaves.comedybox.MainFragment;
 import com.example.eightleaves.comedybox.R;
 import com.squareup.picasso.Picasso;
 
@@ -33,16 +35,21 @@ public class CBAdapter extends CursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
         ViewHolder viewHolder = (ViewHolder)view.getTag();
-        String imageUrl = "http://media.radiomirchi.com/audios/audio_content/thumbnail_1430304758.jpg";
+        String imageUrl = cursor.getString(MainFragment.COL_COMEDY_POSTER_PATH);
+        String artist = cursor.getString(MainFragment.COL_COMEDY_TITLE);
         Picasso.with(context).load(imageUrl)
                 .into(viewHolder.imageView);
+        viewHolder.title.setText(artist);
+
     }
 
     public static class ViewHolder {
         public final ImageView imageView;
+        public final TextView title;
 
         public ViewHolder(View view) {
             imageView = (ImageView) view.findViewById(R.id.list_item_cb_image);
+            title = (TextView)view.findViewById(R.id.list_item_cb_text);
         }
     }
 }

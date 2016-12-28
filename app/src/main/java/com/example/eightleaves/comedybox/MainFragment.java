@@ -51,7 +51,7 @@ public class MainFragment extends Fragment  implements LoaderManager.LoaderCallb
     static final int COL_COMEDY_ID = 0;
     private static final int COL_COMEDY_COMEDY_ID = 1;
     public static final int COL_COMEDY_POSTER_PATH = 2;
-    static final int COL_COMEDY_TITLE = 3;
+    public static final int COL_COMEDY_TITLE = 3;
     static final int COL_COMEDY_RELEASE_DATE = 4;
     static final int COL_COMEDY_OVERVIEW = 5;
     static final int COL_SORT_SETTING = 6;
@@ -59,7 +59,7 @@ public class MainFragment extends Fragment  implements LoaderManager.LoaderCallb
             CBContract.ComedyEntry.TABLE_NAME + "." + CBContract.ComedyEntry._ID,
             CBContract.ComedyEntry.COLUMN_COMEDY_ID,
             CBContract.ComedyEntry.COLUMN_POSTER_PATH,
-
+            CBContract.ComedyEntry.COLUMN_TITLE,
 
     };
 
@@ -149,9 +149,9 @@ public class MainFragment extends Fragment  implements LoaderManager.LoaderCallb
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String sortOrder = CBContract.ComedyEntry.COLUMN_COMEDY_ID + " ASC";
-        Uri movieForSortSettingUri = CBContract.ComedyEntry.buildComedySort(
+        Uri comedyForSortSettingUri = CBContract.ComedyEntry.buildComedySort(
                 "popular");
-        return new CursorLoader(getActivity(),movieForSortSettingUri,COMEDY_COLUMNS,null,null,sortOrder);
+        return new CursorLoader(getActivity(),comedyForSortSettingUri,COMEDY_COLUMNS,null,null,sortOrder);
 
     }
 

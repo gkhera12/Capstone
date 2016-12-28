@@ -70,12 +70,12 @@ public class CBProvider extends ContentProvider {
     private Cursor getComedyBySortSettingAndComedyId(
             Uri uri, String[] projection, String sortOrder) {
         String sortSetting = CBContract.ComedyEntry.getSortSettingFromUri(uri);
-        long movieId = CBContract.ComedyEntry.getComedyIdFromUri(uri);
+        long comedyId = CBContract.ComedyEntry.getComedyIdFromUri(uri);
 
         return sComedyBySortSettingQueryBuilder.query(CBDbHelper.getReadableDatabase(),
                 projection,
                 sSortSettingAndComedySelection,
-                new String[]{sortSetting, Long.toString(movieId)},
+                new String[]{sortSetting, Long.toString(comedyId)},
                 null,
                 null,
                 sortOrder

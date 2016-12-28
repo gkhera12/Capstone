@@ -9,6 +9,13 @@
         android:scaleType="fitXY"
         android:id="@+id/list_item_cb_image"
         android:src="@mipmap/ic_launcher"
-        android:contentDescription="@string/comedy_box"/>
+        android:contentDescription="@string/comedy_box" />
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:id="@+id/list_item_cb_text"
+        android:text="test"
+        android:background="@color/colorIndigo"
+        android:textSize="@dimen/image_title"/>
 
 </LinearLayout>

@@ -9,7 +9,7 @@ import com.example.eightleaves.comedybox.data.CBContract.ComedyEntry;
 import static com.example.eightleaves.comedybox.data.CBContract.*;
 
 class CBDbHelper extends SQLiteOpenHelper {
-    private static final int DATABASE_VERSION=2;
+    private static final int DATABASE_VERSION=3;
     static final String DATABASE_NAME = "comedy.db";
 
     public CBDbHelper(Context context) {
@@ -23,7 +23,7 @@ class CBDbHelper extends SQLiteOpenHelper {
                 SortEntry._ID +" INTEGER PRIMARY KEY,"+
                 SortEntry.COLUMN_SORT_SETTING + " TEXT NOT NULL" + ")";
 
-        final String SQL_CREATE_MOVIE_TABLE = "CREATE TABLE " + ComedyEntry.TABLE_NAME + "(" +
+        final String SQL_CREATE_COMEDY_TABLE = "CREATE TABLE " + ComedyEntry.TABLE_NAME + "(" +
                 ComedyEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "+
                 ComedyEntry.COLUMN_SORT_KEY + " INTEGER NOT NULL, "+
                 ComedyEntry.COLUMN_COMEDY_ID + " INTEGER NOT NULL, "+
@@ -40,7 +40,7 @@ class CBDbHelper extends SQLiteOpenHelper {
                 " UNIQUE (" + ComedyEntry.COLUMN_COMEDY_ID + ","
                 + ComedyEntry.COLUMN_SORT_KEY + ") ON CONFLICT REPLACE);";
 
-        sqLiteDatabase.execSQL(SQL_CREATE_MOVIE_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_COMEDY_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_SORT_TABLE);
 
     }

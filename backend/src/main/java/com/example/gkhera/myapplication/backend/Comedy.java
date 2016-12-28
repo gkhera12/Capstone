@@ -8,9 +8,16 @@ public class Comedy {
     private String poster_path;
     private String overview;
     private String release_date;
-    private Integer id;
+    private int id;
     private String artist;
 
+    public Comedy(int id, String artist, String poster_path, String overview, String release_date){
+        this.id = id;
+        this.artist = artist;
+        this.poster_path = poster_path;
+        this.overview = overview;
+        this.release_date = release_date;
+    }
     /**
      * @return The poster_path
      */
@@ -56,7 +63,7 @@ public class Comedy {
     /**
      * @return The id
      */
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 

@@ -11,6 +11,7 @@ import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -34,13 +35,10 @@ public class MyEndpoint {
     public ComedyResults getComedyData() {
         ComedyResults results = new ComedyResults();
         List<Comedy> comedies = new ArrayList<>();
-        Comedy comedy = new Comedy();
-        comedy.setArtist("Naved-mirchi murga");
-        comedy.setId(1);
-        comedy.setRelease_date("27-12-2016");
-        comedy.setOverview("mirchi murga");
-        comedy.setPoster_path("http://media.radiomirchi.com/audios/audio_content/thumbnail_1430304758.jpg");
-        comedies.add(comedy);
+        HashMap<Integer, Comedy> map = ComedyData.getComedyHashMap();
+        for(int i =0; i<map.size();i++){
+            comedies.add(map.get(i));
+        }
         results.setResults(comedies);
         return results;
     }

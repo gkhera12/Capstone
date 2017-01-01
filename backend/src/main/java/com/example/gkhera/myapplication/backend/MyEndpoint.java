@@ -9,6 +9,7 @@ package com.example.gkhera.myapplication.backend;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
+import com.google.api.server.spi.config.Named;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,4 +44,17 @@ public class MyEndpoint {
         return results;
     }
 
+    @ApiMethod(name = "getTrailersData")
+    public TrailersResult getTrailersData(@Named("id") int id) {
+        TrailersResult results = new TrailersResult();
+        ArrayList<Trailer> trailers = new ArrayList<>();
+        HashMap<Integer, List<Trailer>> map = TrailersData.getTrailersHashMap();
+        for(int i =0; i<map.size();i++){
+            for(Trailer trailer : map.get(i)){
+                trailers.add(trailer);
+            }
+        }
+        results.setResults(trailers);
+        return results;
+    }
 }

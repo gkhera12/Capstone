@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.example.eightleaves.comedybox.R;
 import com.example.eightleaves.comedybox.data.models.ComedyResults;
+import com.example.eightleaves.comedybox.data.models.TrailersResult;
 import com.example.eightleaves.comedybox.otto.ComedyBus;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -57,6 +58,22 @@ public class EventExecutor {
         });
     }
 
+    @Subscribe
+    public void getTrailers(GetTrailersEvent event) {
+        methods.getTrailersData(Integer.valueOf(event.getComedyId()), new Callback<TrailersResult>() {
+            @Override
+            public void success(TrailersResult reviewResults, Response response) {
+                GetTrailersResultEvent resultEvent = new GetTrailersResultEvent();
+                resultEvent.setTrailersResult(reviewResults);
+                ComedyBus.getInstance().post(resultEvent);
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+
+            }
+        });
+    }
 
     public void onDestroy(){
         ComedyBus.getInstance().unregister(this);

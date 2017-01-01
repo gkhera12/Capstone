@@ -1,10 +1,11 @@
 package com.example.eightleaves.comedybox;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-public class MainActivity extends AppCompatActivity implements MainFragment.OnFragmentInteractionListener{
+public class MainActivity extends AppCompatActivity implements MainFragment.Callback{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -13,7 +14,9 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnFr
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
-
+    public void onItemSelected(Uri contentUri) {
+            Intent intent = new Intent(this, DetailActivity.class)
+                    .setData(contentUri);
+            startActivity(intent);
     }
 }

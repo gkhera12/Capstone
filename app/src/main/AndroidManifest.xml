@@ -11,9 +11,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <provider
-            android:authorities="com.example.eightleaves.comedybox"
-            android:name=".data.CBProvider">
-        </provider>
+            android:name=".data.CBProvider"
+            android:authorities="com.example.eightleaves.comedybox"></provider>
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,6 +21,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".DetailActivity"></activity>
     </application>
 
 </manifest>

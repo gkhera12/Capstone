@@ -11,6 +11,7 @@ import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
 
@@ -36,6 +37,7 @@ public class MainFragment extends Fragment  implements LoaderManager.LoaderCallb
     private GridView gridView;
     private CBAdapter cbAdapter;
     private static final int COMEDY_LOADER =0;
+    private int mPosition = gridView.INVALID_POSITION;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -62,6 +64,10 @@ public class MainFragment extends Fragment  implements LoaderManager.LoaderCallb
             CBContract.ComedyEntry.COLUMN_TITLE,
 
     };
+
+    public interface Callback {
+        void onItemSelected(Uri Uri);
+    }
 
     public MainFragment() {
         // Required empty public constructor
@@ -119,6 +125,18 @@ public class MainFragment extends Fragment  implements LoaderManager.LoaderCallb
         View rootView = inflater.inflate(R.layout.comedy_fragment, container, false);
         gridView = (GridView) rootView.findViewById(R.id.gridview);
         gridView.setAdapter(cbAdapter);
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
+                String sortby = "popular";
+                ((Callback) getActivity())
+                        .onItemSelected(CBContract.ComedyEntry.buildComedySortWithComedyId(
+                                sortby, cursor.getInt(COL_COMEDY_COMEDY_ID)
+                        ));
+                mPosition = position;
+            }
+        });
         return  rootView;
     }
 
@@ -132,12 +150,6 @@ public class MainFragment extends Fragment  implements LoaderManager.LoaderCallb
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
     }
 
     @Override

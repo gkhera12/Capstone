@@ -4,4 +4,6 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="image_layout_height">185dp</dimen>
     <dimen name="image_title">20sp</dimen>
+    <dimen name="comedy_title_layout_height">100dp</dimen>
+    <dimen name="detail_fragment_padding">24dp</dimen>
 </resources>

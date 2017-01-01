@@ -1,10 +1,14 @@
 package com.example.eightleaves.comedybox.events;
 
 import com.example.eightleaves.comedybox.data.models.ComedyResults;
+import com.example.eightleaves.comedybox.data.models.TrailersResult;
 
 import retrofit.Callback;
+import retrofit.http.Field;
+import retrofit.http.FormUrlEncoded;
 import retrofit.http.GET;
-import retrofit.http.Query;
+import retrofit.http.POST;
+import retrofit.http.Path;
 
 
 /**
@@ -12,6 +16,8 @@ import retrofit.http.Query;
  */
 
 public interface ComedyApiMethods {
-    @GET("/")
+    @GET("/comedyresults")
     void getComedyData(Callback<ComedyResults> cb);
+    @GET("/trailersresult/{id}")
+    void getTrailersData(@Path("id") int comedyId, Callback<TrailersResult> cb);
 }

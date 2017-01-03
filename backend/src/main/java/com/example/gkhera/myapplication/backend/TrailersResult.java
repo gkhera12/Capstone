@@ -5,12 +5,13 @@ package com.example.gkhera.myapplication.backend;
  */
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class TrailersResult {
 
     private Integer id;
-    private ArrayList<Trailer> results = new ArrayList<>();
+    private List<Trailer> results = new ArrayList<>();
 
     /**
      *
@@ -35,7 +36,7 @@ public class TrailersResult {
      * @return
      * The results
      */
-    public ArrayList<Trailer> getResults() {
+    public List<Trailer> getResults() {
         return results;
     }
 
@@ -44,7 +45,7 @@ public class TrailersResult {
      * @param results
      * The results
      */
-    public void setResults(ArrayList<Trailer> results) {
+    public void setResults(List<Trailer> results) {
         this.results = results;
     }
 

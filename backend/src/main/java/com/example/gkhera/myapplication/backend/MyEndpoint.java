@@ -47,14 +47,14 @@ public class MyEndpoint {
     @ApiMethod(name = "getTrailersData")
     public TrailersResult getTrailersData(@Named("id") int id) {
         TrailersResult results = new TrailersResult();
-        ArrayList<Trailer> trailers = new ArrayList<>();
+        List<Trailer> trailers = new ArrayList<>();
         HashMap<Integer, List<Trailer>> map = TrailersData.getTrailersHashMap();
         for(int i =0; i<map.size();i++){
             for(Trailer trailer : map.get(i)){
                 trailers.add(trailer);
             }
         }
-        results.setResults(trailers);
+        results.setResults(map.get(id));
         return results;
     }
 }

@@ -22,6 +22,9 @@ public class ComedyData {
     private static Comedy krushnaComedy = new Comedy(4,"Krushna Abhishek",
             "http://www.filmyfolks.com/celebrity/tellywood/images/krushna-abhishek.jpg","Krushna Abhishek",
             "27-12-2016");
+    private static Comedy ehsaanComedy = new Comedy(5,"Ehsaan Kureshi",
+            "http://www.cochintalkies.com/celebrities_image/thumb1/ehsaan-qureshi-movie-actor-pics-5919.jpg","Ehsaan Kureshi",
+            "27-12-2016");
     private static HashMap<Integer, Comedy> comedyHashMap = new HashMap<Integer, Comedy>();
 
     static{
@@ -30,6 +33,7 @@ public class ComedyData {
         comedyHashMap.put(bhartiComedy.getId(),bhartiComedy);
         comedyHashMap.put(rajuComedy.getId(),rajuComedy);
         comedyHashMap.put(krushnaComedy.getId(),krushnaComedy);
+        comedyHashMap.put(ehsaanComedy.getId(),ehsaanComedy);
     }
 
     public static HashMap<Integer, Comedy> getComedyHashMap() {

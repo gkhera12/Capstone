@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "833629729726",
+    "firebase_url": "https://comedybox-cdb90.firebaseio.com",
+    "project_id": "comedybox-cdb90",
+    "storage_bucket": "comedybox-cdb90.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:833629729726:android:5747fcdd1325aa03",
+        "android_client_info": {
+          "package_name": "com.example.eightleaves.comedybox"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "833629729726-62gms03j7b7makjtf9s0s0spna6jd3re.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.eightleaves.comedybox",
+            "certificate_hash": "5D3D35B550534A474140E246994D07BE8EBCBA9C"
+          }
+        },
+        {
+          "client_id": "833629729726-kj4rntlkg6ne4ttss0dnf0v0gkcgki8q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCS6EikonNvJyIHhH5M9R17Hy4suGsoutg"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "833629729726-kj4rntlkg6ne4ttss0dnf0v0gkcgki8q.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

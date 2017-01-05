@@ -7,5 +7,9 @@
     <string name="endpoint">http://10.0.2.2:8080/_ah/api/comedyBox/v1/</string>
     <string name="trailers">Comedy Titles</string>
     <string name="trailer">Title</string>
+    <string name="currently_playing_song">Currently Playing Song</string>
+    <string name="currently_playing_artist">currently playing artist</string>
+    <string name="currently_playing_extra_info">Currently playing</string>
+    <string name="play_pause">Play</string>
     <!--<string name="endpoint">https://comedybox-cdb90.appspot.com/_ah/api/comedyBox/v1/comedyresults</string>-->
 </resources>

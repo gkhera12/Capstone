@@ -1,8 +1,6 @@
 package com.example.eightleaves.comedybox.adapter;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +10,8 @@ import android.widget.TextView;
 
 import com.example.eightleaves.comedybox.R;
 import com.example.eightleaves.comedybox.data.models.Trailer;
-import com.squareup.picasso.Picasso;
+import com.example.eightleaves.comedybox.events.PlayTrailerEvent;
+import com.example.eightleaves.comedybox.otto.ComedyBus;
 
 import java.util.List;
 
@@ -22,6 +21,7 @@ import java.util.List;
 public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.ViewHolder> {
     private final Context mContext;
     private List<Trailer> mValues;
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
 
@@ -61,9 +61,10 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.ViewHold
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Context context = v.getContext();
-//                context.startActivity(new Intent(Intent.ACTION_VIEW,
-//                        Uri.parse(Utility.formatLink(context,mValues.get(position).getKey()))));
+                PlayTrailerEvent event = new PlayTrailerEvent();
+                event.setTitle(mValues.get(position).getName());
+                event.setUrl(mValues.get(position).getSite());
+                ComedyBus.getInstance().post(event);
             }
         });
 

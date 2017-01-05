@@ -21,7 +21,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".DetailActivity"></activity>
+        <activity android:name=".DetailActivity"
+            android:label="@string/trailers"
+            android:parentActivityName=".MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.eightleaves.comedybox.MainActivity" />
+        </activity>
+        <service android:name="com.example.jean.jcplayer.JcPlayerService" />
+
+        <receiver
+            android:name="com.example.jean.jcplayer.JcPlayerNotificationReceiver"
+            android:enabled="true"
+            android:exported="false" />
     </application>
 
 </manifest>

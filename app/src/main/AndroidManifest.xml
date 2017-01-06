@@ -30,10 +30,13 @@
         </activity>
         <service android:name="com.example.jean.jcplayer.JcPlayerService" />
 
-        <receiver
-            android:name="com.example.jean.jcplayer.JcPlayerNotificationReceiver"
-            android:enabled="true"
-            android:exported="false" />
+        <receiver android:name=".ComedyWidgetProvider" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider"
+                android:resource="@xml/comedy_widget_info" />
+        </receiver>
     </application>
 
 </manifest>

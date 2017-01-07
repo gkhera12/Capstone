@@ -1,6 +1,6 @@
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
-    android:minWidth="180dp"
-    android:minHeight="80dp"
+    android:minWidth="@dimen/widget_width"
+    android:minHeight="@dimen/widget_height"
     android:updatePeriodMillis="0"
     android:previewImage="@drawable/preview"
     android:initialLayout="@layout/comedy_widget"

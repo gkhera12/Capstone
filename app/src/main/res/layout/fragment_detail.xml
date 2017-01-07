@@ -10,7 +10,10 @@
     <LinearLayout android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            xmlns:ads="http://schemas.android.com/apk/res-auto">
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="340dp"
@@ -19,8 +22,17 @@
                 android:layout_gravity="left|top"
                 android:scaleType="fitXY"
                 android:contentDescription="@string/comedy_box"/>
-
-        <LinearLayout
+            <com.google.android.gms.ads.AdView
+                android:id="@+id/adView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="false"
+                android:layout_alignTop="@+id/list_item_comedy_image"
+                ads:adSize="BANNER"
+                ads:adUnitId="@string/banner_ad_unit_id">
+            </com.google.android.gms.ads.AdView>
+        </RelativeLayout>
+    <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">

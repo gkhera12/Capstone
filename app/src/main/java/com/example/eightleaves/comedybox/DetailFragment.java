@@ -31,6 +31,9 @@ import com.example.eightleaves.comedybox.otto.ComedyBus;
 import com.example.jean.jcplayer.JcAudio;
 import com.example.jean.jcplayer.JcPlayerService;
 import com.example.jean.jcplayer.JcPlayerView;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
 
@@ -111,6 +114,12 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             trailerList = savedInstanceState.getParcelableArrayList(TRAILERS_KEY);
             setupTrailerRecyclerView();
         }
+        MobileAds.initialize(getContext(),getString(R.string.banner_ad_unit_id));
+        AdView mAdView = (AdView) rootView.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .build();
+        mAdView.loadAd(adRequest);
         return rootView;
     }
 
@@ -165,9 +174,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     @Override
     public void onPause(){
-        jcPlayerView.createNotification();
         super.onPause();
-
+        jcPlayerView.onPaused();
     }
 
     private void getTrailers(int comedyId){

@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion "24.0.2"
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
     defaultConfig {
         applicationId "com.example.eightleaves.comedybox"
         minSdkVersion 16
-        targetSdkVersion 24
+        targetSdkVersion 25
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -43,6 +43,7 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:+'
     compile 'io.github.jeancsanchez.jcplayer:jcplayer:2.6.0-alpha'
     compile 'com.google.firebase:firebase-ads:10.0.1'
+    compile 'com.google.android.gms:play-services-analytics:10.0.1'
     testCompile 'junit:junit:4.12'
 }
 apply plugin: 'com.google.gms.google-services'

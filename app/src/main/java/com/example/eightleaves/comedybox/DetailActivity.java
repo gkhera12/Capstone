@@ -6,7 +6,12 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.eightleaves.comedybox.data.models.Comedy;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
 public class DetailActivity extends AppCompatActivity {
+    private Tracker mTracker;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -21,6 +26,12 @@ public class DetailActivity extends AppCompatActivity {
                     .replace(R.id.comedy_detail_container, fragment)
                     .commit();
         }
+        mTracker = ((ComedyApplication)getApplication()).getDefaultTracker();
+        sendTrackingEvent();
     }
 
+    private void sendTrackingEvent(){
+        mTracker.setScreenName(DetailActivity.class.getName());
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+    }
 }

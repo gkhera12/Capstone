@@ -175,6 +175,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public void onPause(){
         super.onPause();
+        jcPlayerView.onPaused();
     }
 
     private void getTrailers(int comedyId){

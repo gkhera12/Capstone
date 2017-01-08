@@ -28,9 +28,6 @@ import com.example.eightleaves.comedybox.events.GetTrailersEvent;
 import com.example.eightleaves.comedybox.events.GetTrailersResultEvent;
 import com.example.eightleaves.comedybox.events.PlayTrailerEvent;
 import com.example.eightleaves.comedybox.otto.ComedyBus;
-import com.example.jean.jcplayer.JcAudio;
-import com.example.jean.jcplayer.JcPlayerService;
-import com.example.jean.jcplayer.JcPlayerView;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
@@ -40,7 +37,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 
-public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener,JcPlayerService.JcPlayerServiceListener{
+public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener{
     static final String DETAIL_URI = "URI";
     private Uri mUri;
     private static final int DETAIL_LOADER=1;
@@ -54,8 +51,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     private Intent mShareIntent;
     private EventExecutor executor;
     private CBDataUpdator comedyDataUpdator;
-    private JcPlayerView jcPlayerView;
-    ArrayList<JcAudio> jcAudios;
     private static final String TRAILERS_KEY = "trailers";
 
     static final int COL_COMEDY_ID = 0;
@@ -86,7 +81,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public void onDestroy(){
         ComedyBus.getInstance().unregister(this);
-        jcPlayerView.kill();
         super.onDestroy();
     }
     @Override
@@ -108,8 +102,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         imageView = (ImageView)rootView.findViewById(R.id.list_item_comedy_image);
         titleText = (TextView) rootView.findViewById(R.id.list_item_comedy_title);
         trailersListView = (RecyclerView)rootView.findViewById(R.id.list_item_comedy_trailers_list);
-        jcPlayerView = (JcPlayerView)rootView.findViewById(R.id.jcplayer);
-        jcPlayerView.registerServiceListener(this);
         if(savedInstanceState != null && savedInstanceState.containsKey(TRAILERS_KEY)){
             trailerList = savedInstanceState.getParcelableArrayList(TRAILERS_KEY);
             setupTrailerRecyclerView();
@@ -175,7 +167,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public void onPause(){
         super.onPause();
-        jcPlayerView.onPaused();
     }
 
     private void getTrailers(int comedyId){
@@ -198,9 +189,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             if (!trailerList.isEmpty() && trailerList != null) {
                 setupTrailerRecyclerView();
                 for(Trailer trailer: trailerList){
-                jcAudios = new ArrayList<>();
-                jcAudios.add(JcAudio.createFromURL(trailer.getName(),trailer.getSite()));
-                jcPlayerView.initPlaylist(jcAudios);
                 }
             }
         }
@@ -232,9 +220,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     @Subscribe
     public void processPlayTrailerEvent(PlayTrailerEvent event){
-        jcPlayerView.setVisibility(View.VISIBLE);
-
-        jcPlayerView.playAudio(jcAudios.get(0));
     }
 
     @Override
@@ -242,40 +227,5 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
         comedyDataUpdator = new CBDataUpdator(getContext());
         executor = new EventExecutor(getContext());
-    }
-
-    @Override
-    public void onPreparedAudio(String audioName, int duration) {
-
-    }
-
-    @Override
-    public void onCompletedAudio() {
-
-    }
-
-    @Override
-    public void onPaused() {
-
-    }
-
-    @Override
-    public void onContinueAudio() {
-
-    }
-
-    @Override
-    public void onPlaying() {
-
-    }
-
-    @Override
-    public void onTimeChanged(long currentTime) {
-
-    }
-
-    @Override
-    public void updateTitle(String title) {
-
     }
 }

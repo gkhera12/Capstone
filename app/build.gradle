@@ -41,7 +41,6 @@ dependencies {
     compile 'com.squareup.retrofit:retrofit:1.9.0'
     compile 'com.google.code.findbugs:jsr305:2.0.1'
     compile 'com.android.support:recyclerview-v7:+'
-    compile 'io.github.jeancsanchez.jcplayer:jcplayer:2.6.0-alpha'
     compile 'com.google.firebase:firebase-ads:10.0.1'
     compile 'com.google.android.gms:play-services-analytics:10.0.1'
     testCompile 'junit:junit:4.12'

@@ -5,7 +5,9 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -17,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.eightleaves.comedybox.adapter.TrailerAdapter;
@@ -28,6 +31,14 @@ import com.example.eightleaves.comedybox.events.GetTrailersEvent;
 import com.example.eightleaves.comedybox.events.GetTrailersResultEvent;
 import com.example.eightleaves.comedybox.events.PlayTrailerEvent;
 import com.example.eightleaves.comedybox.otto.ComedyBus;
+import com.google.android.exoplayer.ExoPlayer;
+import com.google.android.exoplayer.MediaCodecAudioTrackRenderer;
+import com.google.android.exoplayer.extractor.ExtractorSampleSource;
+import com.google.android.exoplayer.upstream.Allocator;
+import com.google.android.exoplayer.upstream.DataSource;
+import com.google.android.exoplayer.upstream.DefaultAllocator;
+import com.google.android.exoplayer.upstream.DefaultUriDataSource;
+import com.google.android.exoplayer.util.Util;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
@@ -52,7 +63,12 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     private EventExecutor executor;
     private CBDataUpdator comedyDataUpdator;
     private static final String TRAILERS_KEY = "trailers";
-
+    private LinearLayout playerView;
+    private ExoPlayer exoPlayer;
+    private static final int BUFFER_SEGMENT_SIZE = 64 * 1024;
+    private static final int BUFFER_SEGMENT_COUNT = 256;
+    private MediaCodecAudioTrackRenderer audioRenderer;
+    private ImageView playBtn;
     static final int COL_COMEDY_ID = 0;
     static final int COL_COMEDY_COMEDY_ID = 1;
     private static final int COL_COMEDY_POSTER_PATH = 2;
@@ -112,6 +128,9 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                 .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
                 .build();
         mAdView.loadAd(adRequest);
+        exoPlayer = ExoPlayer.Factory.newInstance(1);
+        playerView = (LinearLayout) rootView.findViewById(R.id.player_layout);
+        playBtn = (ImageView) rootView.findViewById(R.id.btn_play);
         return rootView;
     }
 
@@ -167,6 +186,9 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public void onPause(){
         super.onPause();
+        if(exoPlayer.isPlayWhenReadyCommitted()){
+            exoPlayer.release();
+        }
     }
 
     private void getTrailers(int comedyId){
@@ -218,8 +240,24 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         return sortSettingId;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Subscribe
     public void processPlayTrailerEvent(PlayTrailerEvent event){
+        playerView.setVisibility(View.VISIBLE);
+        playBtn.setImageDrawable(getContext().getDrawable(R.drawable.ic_pause));
+        String url = event.getUrl();
+        Uri radioUri = Uri.parse(url);
+        // Settings for exoPlayer
+        Allocator allocator = new DefaultAllocator(BUFFER_SEGMENT_SIZE);
+        String userAgent = Util.getUserAgent(getContext(), "ExoPlayerDemo");
+        DataSource dataSource = new DefaultUriDataSource(getContext(), null, userAgent);
+        ExtractorSampleSource sampleSource = new ExtractorSampleSource(
+                radioUri, dataSource, allocator, BUFFER_SEGMENT_SIZE * BUFFER_SEGMENT_COUNT);
+        audioRenderer = new MediaCodecAudioTrackRenderer(sampleSource);
+// Prepare ExoPlayer
+        exoPlayer.prepare(audioRenderer);
+        exoPlayer.setPlayWhenReady(true);
+
     }
 
     @Override

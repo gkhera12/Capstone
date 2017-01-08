@@ -13,17 +13,19 @@ public class TrailersData {
             "http://media.radiomirchi.com/audios/audio_content/ONLINESHOPPING-1460632266.mp3");
     private static List<Trailer> mirchiMurga = new ArrayList<>();
     private static Trailer amazingPerformance = new Trailer(3,1, "Politics in India",
-            "https://drive.google.com/file/d/0B09_qhQm-nIUNldZWGswcW9JZjg/view?usp=sharing");
+            "https://drive.google.com/uc?export=download&id=0B09_qhQm-nIUNldZWGswcW9JZjg");
     private static Trailer newsReporter= new Trailer(3,0, "News Reporter Comedy",
-            "https://drive.google.com/file/d/0B09_qhQm-nIUOEdJUEZMQjVRUlk/view?usp=sharing");
+            "https://drive.google.com/uc?export=download&id=0B09_qhQm-nIUOEdJUEZMQjVRUlk");
     private static List<Trailer> rajuSrivastava = new ArrayList<>();
-    private static Trailer doctorPatient = new Trailer(3,0, "Doctor Patients",
-            "https://drive.google.com/file/d/0B09_qhQm-nIUd3ZRNWVDaXFoZDA/view?usp=sharing");
+    private static Trailer mallikaJi = new Trailer(5,1,"Mallika ji",
+        "https://drive.google.com/uc?export=download&id=0B09_qhQm-nIUSXV6cDNrUGw4Rk0");
+    private static Trailer doctorPatient = new Trailer(5,0, "Doctor Patients",
+            "https://drive.google.com/uc?export=download&id=0B09_qhQm-nIUd3ZRNWVDaXFoZDA");
     private static List<Trailer> ehsaanQuereshi = new ArrayList<>();
     private static Trailer firstAct = new Trailer(1,0, "First Act",
-            "https://drive.google.com/file/d/0B09_qhQm-nIUMkdOWlVQdFkyQzQ/view?usp=sharing");
+            "https://drive.google.com/uc?export=download&id=0B09_qhQm-nIUMkdOWlVQdFkyQzQ");
     private static Trailer indianRecord = new Trailer(1,1, "Indian Records",
-            "https://drive.google.com/file/d/0B09_qhQm-nIUcHdoeFQ2QzlSOVE/view?usp=sharing");
+            "https://drive.google.com/uc?export=download&id=0B09_qhQm-nIUcHdoeFQ2QzlSOVE");
     private static List<Trailer> kapilSharma = new ArrayList<>();
     private static List<Trailer> bhartiSingh= new ArrayList<>();
     private static List<Trailer> krushnaAbhishek= new ArrayList<>();

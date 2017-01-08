@@ -14,7 +14,6 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.ShareActionProvider;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -68,7 +67,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     private static final int BUFFER_SEGMENT_SIZE = 64 * 1024;
     private static final int BUFFER_SEGMENT_COUNT = 256;
     private MediaCodecAudioTrackRenderer audioRenderer;
-    private ImageView playBtn;
+    private ImageView playPauseBtn;
+    private boolean isPlaying = false;
     static final int COL_COMEDY_ID = 0;
     static final int COL_COMEDY_COMEDY_ID = 1;
     private static final int COL_COMEDY_POSTER_PATH = 2;
@@ -130,7 +130,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         mAdView.loadAd(adRequest);
         exoPlayer = ExoPlayer.Factory.newInstance(1);
         playerView = (LinearLayout) rootView.findViewById(R.id.player_layout);
-        playBtn = (ImageView) rootView.findViewById(R.id.btn_play);
+        playPauseBtn = (ImageView) rootView.findViewById(R.id.btn_play);
+        playPauseBtn.setOnClickListener(this);
         return rootView;
     }
 
@@ -244,12 +245,12 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     @Subscribe
     public void processPlayTrailerEvent(PlayTrailerEvent event){
         playerView.setVisibility(View.VISIBLE);
-        playBtn.setImageDrawable(getContext().getDrawable(R.drawable.ic_pause));
+        playPauseBtn.setImageDrawable(getContext().getDrawable(R.drawable.ic_pause));
         String url = event.getUrl();
         Uri radioUri = Uri.parse(url);
         // Settings for exoPlayer
         Allocator allocator = new DefaultAllocator(BUFFER_SEGMENT_SIZE);
-        String userAgent = Util.getUserAgent(getContext(), "ExoPlayerDemo");
+        String userAgent = Util.getUserAgent(getContext(), getString(R.string.app_name));
         DataSource dataSource = new DefaultUriDataSource(getContext(), null, userAgent);
         ExtractorSampleSource sampleSource = new ExtractorSampleSource(
                 radioUri, dataSource, allocator, BUFFER_SEGMENT_SIZE * BUFFER_SEGMENT_COUNT);
@@ -257,12 +258,24 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 // Prepare ExoPlayer
         exoPlayer.prepare(audioRenderer);
         exoPlayer.setPlayWhenReady(true);
-
+        isPlaying=true;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onClick(View v) {
-
+        switch (v.getId()){
+            case R.id.btn_play:
+                if(isPlaying){
+                    isPlaying = false;
+                    exoPlayer.setPlayWhenReady(false);
+                    playPauseBtn.setImageDrawable(getContext().getDrawable(R.drawable.ic_play_arrow_black_24dp));
+                }else{
+                    isPlaying = true;
+                    exoPlayer.setPlayWhenReady(true);
+                    playPauseBtn.setImageDrawable(getContext().getDrawable(R.drawable.ic_pause));
+                }
+        }
         comedyDataUpdator = new CBDataUpdator(getContext());
         executor = new EventExecutor(getContext());
     }

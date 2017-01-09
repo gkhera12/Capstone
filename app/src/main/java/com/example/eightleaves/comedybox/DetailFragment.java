@@ -5,18 +5,20 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.ShareActionProvider;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.eightleaves.comedybox.adapter.TrailerAdapter;
@@ -28,9 +30,14 @@ import com.example.eightleaves.comedybox.events.GetTrailersEvent;
 import com.example.eightleaves.comedybox.events.GetTrailersResultEvent;
 import com.example.eightleaves.comedybox.events.PlayTrailerEvent;
 import com.example.eightleaves.comedybox.otto.ComedyBus;
-import com.example.jean.jcplayer.JcAudio;
-import com.example.jean.jcplayer.JcPlayerService;
-import com.example.jean.jcplayer.JcPlayerView;
+import com.google.android.exoplayer.ExoPlayer;
+import com.google.android.exoplayer.MediaCodecAudioTrackRenderer;
+import com.google.android.exoplayer.extractor.ExtractorSampleSource;
+import com.google.android.exoplayer.upstream.Allocator;
+import com.google.android.exoplayer.upstream.DataSource;
+import com.google.android.exoplayer.upstream.DefaultAllocator;
+import com.google.android.exoplayer.upstream.DefaultUriDataSource;
+import com.google.android.exoplayer.util.Util;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
@@ -40,7 +47,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 
-public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener,JcPlayerService.JcPlayerServiceListener{
+public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener{
     static final String DETAIL_URI = "URI";
     private Uri mUri;
     private static final int DETAIL_LOADER=1;
@@ -54,10 +61,14 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     private Intent mShareIntent;
     private EventExecutor executor;
     private CBDataUpdator comedyDataUpdator;
-    private JcPlayerView jcPlayerView;
-    ArrayList<JcAudio> jcAudios;
     private static final String TRAILERS_KEY = "trailers";
-
+    private LinearLayout playerView;
+    private ExoPlayer exoPlayer;
+    private static final int BUFFER_SEGMENT_SIZE = 64 * 1024;
+    private static final int BUFFER_SEGMENT_COUNT = 256;
+    private MediaCodecAudioTrackRenderer audioRenderer;
+    private ImageView playPauseBtn;
+    private boolean isPlaying = false;
     static final int COL_COMEDY_ID = 0;
     static final int COL_COMEDY_COMEDY_ID = 1;
     private static final int COL_COMEDY_POSTER_PATH = 2;
@@ -86,7 +97,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public void onDestroy(){
         ComedyBus.getInstance().unregister(this);
-        jcPlayerView.kill();
         super.onDestroy();
     }
     @Override
@@ -108,8 +118,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         imageView = (ImageView)rootView.findViewById(R.id.list_item_comedy_image);
         titleText = (TextView) rootView.findViewById(R.id.list_item_comedy_title);
         trailersListView = (RecyclerView)rootView.findViewById(R.id.list_item_comedy_trailers_list);
-        jcPlayerView = (JcPlayerView)rootView.findViewById(R.id.jcplayer);
-        jcPlayerView.registerServiceListener(this);
         if(savedInstanceState != null && savedInstanceState.containsKey(TRAILERS_KEY)){
             trailerList = savedInstanceState.getParcelableArrayList(TRAILERS_KEY);
             setupTrailerRecyclerView();
@@ -120,6 +128,10 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                 .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
                 .build();
         mAdView.loadAd(adRequest);
+        exoPlayer = ExoPlayer.Factory.newInstance(1);
+        playerView = (LinearLayout) rootView.findViewById(R.id.player_layout);
+        playPauseBtn = (ImageView) rootView.findViewById(R.id.btn_play);
+        playPauseBtn.setOnClickListener(this);
         return rootView;
     }
 
@@ -175,7 +187,9 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public void onPause(){
         super.onPause();
-        jcPlayerView.onPaused();
+        if(exoPlayer.isPlayWhenReadyCommitted()){
+            exoPlayer.release();
+        }
     }
 
     private void getTrailers(int comedyId){
@@ -198,9 +212,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             if (!trailerList.isEmpty() && trailerList != null) {
                 setupTrailerRecyclerView();
                 for(Trailer trailer: trailerList){
-                jcAudios = new ArrayList<>();
-                jcAudios.add(JcAudio.createFromURL(trailer.getName(),trailer.getSite()));
-                jcPlayerView.initPlaylist(jcAudios);
                 }
             }
         }
@@ -230,52 +241,42 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         return sortSettingId;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Subscribe
     public void processPlayTrailerEvent(PlayTrailerEvent event){
-        jcPlayerView.setVisibility(View.VISIBLE);
-
-        jcPlayerView.playAudio(jcAudios.get(0));
+        playerView.setVisibility(View.VISIBLE);
+        playPauseBtn.setImageDrawable(getContext().getDrawable(R.drawable.ic_pause));
+        String url = event.getUrl();
+        Uri radioUri = Uri.parse(url);
+        // Settings for exoPlayer
+        Allocator allocator = new DefaultAllocator(BUFFER_SEGMENT_SIZE);
+        String userAgent = Util.getUserAgent(getContext(), getString(R.string.app_name));
+        DataSource dataSource = new DefaultUriDataSource(getContext(), null, userAgent);
+        ExtractorSampleSource sampleSource = new ExtractorSampleSource(
+                radioUri, dataSource, allocator, BUFFER_SEGMENT_SIZE * BUFFER_SEGMENT_COUNT);
+        audioRenderer = new MediaCodecAudioTrackRenderer(sampleSource);
+// Prepare ExoPlayer
+        exoPlayer.prepare(audioRenderer);
+        exoPlayer.setPlayWhenReady(true);
+        isPlaying=true;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onClick(View v) {
-
+        switch (v.getId()){
+            case R.id.btn_play:
+                if(isPlaying){
+                    isPlaying = false;
+                    exoPlayer.setPlayWhenReady(false);
+                    playPauseBtn.setImageDrawable(getContext().getDrawable(R.drawable.ic_play_arrow_black_24dp));
+                }else{
+                    isPlaying = true;
+                    exoPlayer.setPlayWhenReady(true);
+                    playPauseBtn.setImageDrawable(getContext().getDrawable(R.drawable.ic_pause));
+                }
+        }
         comedyDataUpdator = new CBDataUpdator(getContext());
         executor = new EventExecutor(getContext());
-    }
-
-    @Override
-    public void onPreparedAudio(String audioName, int duration) {
-
-    }
-
-    @Override
-    public void onCompletedAudio() {
-
-    }
-
-    @Override
-    public void onPaused() {
-
-    }
-
-    @Override
-    public void onContinueAudio() {
-
-    }
-
-    @Override
-    public void onPlaying() {
-
-    }
-
-    @Override
-    public void onTimeChanged(long currentTime) {
-
-    }
-
-    @Override
-    public void updateTitle(String title) {
-
     }
 }

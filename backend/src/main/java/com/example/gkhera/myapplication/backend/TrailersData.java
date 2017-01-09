@@ -11,6 +11,8 @@ import java.util.List;
 public class TrailersData {
     private static Trailer onlineShopping = new Trailer(0,0, "Online Shopping",
             "http://media.radiomirchi.com/audios/audio_content/ONLINESHOPPING-1460632266.mp3");
+    private static Trailer juddGaye= new Trailer(0,1, "Humaare Saath Judd Gaye",
+            "http://media.radiomirchi.com/audios/audio_content/JUDDGAYE-1460632097.mp3");
     private static List<Trailer> mirchiMurga = new ArrayList<>();
     private static Trailer amazingPerformance = new Trailer(3,1, "Politics in India",
             "https://drive.google.com/uc?export=download&id=0B09_qhQm-nIUNldZWGswcW9JZjg");
@@ -26,16 +28,30 @@ public class TrailersData {
             "https://drive.google.com/uc?export=download&id=0B09_qhQm-nIUMkdOWlVQdFkyQzQ");
     private static Trailer indianRecord = new Trailer(1,1, "Indian Records",
             "https://drive.google.com/uc?export=download&id=0B09_qhQm-nIUcHdoeFQ2QzlSOVE");
+    private static Trailer krushnaComedy= new Trailer(4,0, "Comedy Circus",
+            "https://drive.google.com/uc?export=download&id=0B09_qhQm-nIUWVBiRHYzWnd5bU0");
+    private static Trailer krushnaComedd2= new Trailer(4,1, "Krushna as gabbar",
+            "https://drive.google.com/uc?export=download&id=0B09_qhQm-nIUcTNhdG1McnV3MGc");
     private static List<Trailer> kapilSharma = new ArrayList<>();
     private static List<Trailer> bhartiSingh= new ArrayList<>();
+    private static Trailer bhartiComedy2= new Trailer(2,1, "Comedy Naya Daur",
+            "https://drive.google.com/uc?export=download&id=0B09_qhQm-nIUb2M3NGhleXgwRmM");
+    private static Trailer bhartiComedy1= new Trailer(2,0, "Comedy with Sidarth",
+            "https://drive.google.com/uc?export=download&id=0B09_qhQm-nIUcTNhdG1McnV3MGc");
     private static List<Trailer> krushnaAbhishek= new ArrayList<>();
     static{
         mirchiMurga.add(onlineShopping);
+        mirchiMurga.add(juddGaye);
         kapilSharma.add(firstAct);
         kapilSharma.add(indianRecord);
         rajuSrivastava.add(newsReporter);
         rajuSrivastava.add(amazingPerformance);
         ehsaanQuereshi.add(doctorPatient);
+        ehsaanQuereshi.add(mallikaJi);
+        krushnaAbhishek.add(krushnaComedy);
+        krushnaAbhishek.add(krushnaComedd2);
+        bhartiSingh.add(bhartiComedy1);
+        bhartiSingh.add(bhartiComedy2);
     }
     private static HashMap<Integer, List<Trailer>> trailersHashMap = new HashMap<Integer, List<Trailer>>();
 

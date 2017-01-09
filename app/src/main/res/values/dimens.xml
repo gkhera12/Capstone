@@ -14,5 +14,9 @@
     <dimen name="widget_margin">16dp</dimen>
     <dimen name="widget_width">220dp</dimen>
     <dimen name="widget_height">80dp</dimen>
+    <dimen name="detail_title_text_size">42sp</dimen>
+    <dimen name="padding_bottom">8dp</dimen>
+    <dimen name="margin_top">32dp</dimen>
+    <dimen name="margin_left">16dp</dimen>
 
 </resources>

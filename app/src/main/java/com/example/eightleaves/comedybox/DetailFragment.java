@@ -68,6 +68,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     private static final int BUFFER_SEGMENT_COUNT = 256;
     private MediaCodecAudioTrackRenderer audioRenderer;
     private ImageView playPauseBtn;
+    private TextView playerTitle;
     private boolean isPlaying = false;
     static final int COL_COMEDY_ID = 0;
     static final int COL_COMEDY_COMEDY_ID = 1;
@@ -132,6 +133,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         playerView = (LinearLayout) rootView.findViewById(R.id.player_layout);
         playPauseBtn = (ImageView) rootView.findViewById(R.id.btn_play);
         playPauseBtn.setOnClickListener(this);
+
+        playerTitle = (TextView) rootView.findViewById(R.id.title_text);
         return rootView;
     }
 
@@ -246,6 +249,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     public void processPlayTrailerEvent(PlayTrailerEvent event){
         playerView.setVisibility(View.VISIBLE);
         playPauseBtn.setImageDrawable(getContext().getDrawable(R.drawable.ic_pause));
+        playerTitle.setText(event.getTitle());
         String url = event.getUrl();
         Uri radioUri = Uri.parse(url);
         // Settings for exoPlayer

@@ -43,10 +43,16 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:textSize="24sp"
                 android:id="@+id/list_item_comedy_title"
                 android:gravity="center_vertical"
+                android:background="@color/colorPrimaryDark"
                 android:paddingLeft="@dimen/detail_fragment_padding"
+                style="?android:attr/textAppearanceMedium"
+                android:fontFamily="Roboto"
+                android:textColor="#FFF"
+                android:paddingBottom="@dimen/padding_bottom"
+                android:textSize="@dimen/detail_title_text_size"
+                android:lineSpacingMultiplier="0.9"
                 />
 
             <android.support.v7.widget.RecyclerView
@@ -61,17 +67,19 @@
                 android:orientation="horizontal"
                 android:background="@color/cardview_dark_background"
                 android:id="@+id/player_layout"
-                android:visibility="gone"
+                android:elevation="@dimen/cardview_default_elevation"
                 android:layout_alignParentBottom="true"
                 android:weightSum="5">
-                <ImageButton
-                    android:id="@+id/btn_fvrt"
-                    android:layout_weight="1"
+                <TextView
+                    android:id="@+id/title_text"
+                    android:layout_weight="2"
+                    android:textColor="@color/white"
+                    android:fontFamily="Roboto"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="@dimen/widget_margin"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
                     android:background="@color/cardview_dark_background"
-                    android:src="@drawable/ic_star_border_black_24dp" />
+                    android:text="title" />
                 <ImageButton
                     android:id="@+id/btn_previous"
                     android:layout_weight="1"
@@ -106,7 +114,7 @@
                     android:padding="@dimen/widget_margin"
                     android:background="@color/cardview_dark_background"
                     android:src="@drawable/ic_share_black_24dp" />
-        </LinearLayout>>
+        </LinearLayout>
     </LinearLayout>
 
 </ScrollView>

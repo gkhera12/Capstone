@@ -15,7 +15,9 @@
         android:layout_width="match_parent"
         android:id="@+id/list_item_cb_text"
         android:text="test"
-        android:background="@color/colorIndigo"
+        android:textColor="@color/colorBlack"
+        style="?android:attr/textAppearanceMedium"
+        android:fontFamily="Roboto"
         android:textSize="@dimen/image_title"/>
 
 </LinearLayout>

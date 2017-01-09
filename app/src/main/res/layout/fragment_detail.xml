@@ -67,6 +67,7 @@
                 android:orientation="horizontal"
                 android:background="@color/cardview_dark_background"
                 android:id="@+id/player_layout"
+                android:visibility="gone"
                 android:elevation="@dimen/cardview_default_elevation"
                 android:layout_alignParentBottom="true"
                 android:weightSum="5">

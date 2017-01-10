@@ -16,10 +16,10 @@
             xmlns:ads="http://schemas.android.com/apk/res-auto">
             <ImageView
                 android:layout_width="match_parent"
-                android:layout_height="340dp"
+                android:layout_height="@dimen/image_height"
                 android:id="@+id/list_item_comedy_image"
                 android:src="@mipmap/ic_launcher"
-                android:layout_gravity="left|top"
+                android:layout_gravity="start|top"
                 android:scaleType="fitXY"
                 android:contentDescription="@string/comedy_box"/>
             <com.google.android.gms.ads.AdView
@@ -46,14 +46,14 @@
                 android:id="@+id/list_item_comedy_title"
                 android:gravity="center_vertical"
                 android:background="@color/colorPrimaryDark"
-                android:paddingLeft="@dimen/detail_fragment_padding"
+                android:paddingStart="@dimen/detail_fragment_padding"
                 style="?android:attr/textAppearanceMedium"
                 android:fontFamily="Roboto"
                 android:textColor="#FFF"
                 android:paddingBottom="@dimen/padding_bottom"
                 android:textSize="@dimen/detail_title_text_size"
                 android:lineSpacingMultiplier="0.9"
-                />
+                android:paddingLeft="@dimen/detail_fragment_padding" />
 
             <android.support.v7.widget.RecyclerView
                 android:layout_width="match_parent"
@@ -89,7 +89,8 @@
                     android:padding="@dimen/widget_margin"
                     android:background="@color/cardview_dark_background"
                     android:src="@drawable/ic_skip_previous_black_24dp"
-                    android:scaleType="fitCenter"/>
+                    android:scaleType="fitCenter"
+                    android:contentDescription="@string/previous"/>
                 <ImageButton
                     android:id="@+id/btn_play"
                     android:layout_weight="1"
@@ -98,7 +99,8 @@
                     android:padding="@dimen/widget_margin"
                     android:background="@color/cardview_dark_background"
                     android:src="@drawable/ic_play_arrow_black_24dp"
-                    android:scaleType="fitCenter"/>
+                    android:scaleType="fitCenter"
+                    android:contentDescription="@string/play"/>
                 <ImageButton
                     android:id="@+id/btn_next"
                     android:layout_weight="1"
@@ -107,14 +109,16 @@
                     android:padding="@dimen/widget_margin"
                     android:background="@color/cardview_dark_background"
                     android:src="@drawable/ic_skip_next_black_24dp"
-                    android:scaleType="fitCenter"/>
+                    android:scaleType="fitCenter"
+                    android:contentDescription="@string/next"/>
                 <ImageButton
                     android:id="@+id/btn_share"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="@dimen/widget_margin"
                     android:background="@color/cardview_dark_background"
-                    android:src="@drawable/ic_share_black_24dp" />
+                    android:src="@drawable/ic_share_black_24dp"
+                    android:contentDescription="@string/share"/>
         </LinearLayout>
     </LinearLayout>
 

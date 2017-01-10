@@ -39,8 +39,8 @@ public class CBAdapter extends CursorAdapter {
         String artist = cursor.getString(MainFragment.COL_COMEDY_TITLE);
         Picasso.with(context).load(imageUrl)
                 .into(viewHolder.imageView);
+        view.setContentDescription(artist);
         viewHolder.title.setText(artist);
-
     }
 
     public static class ViewHolder {

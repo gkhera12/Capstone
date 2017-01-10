@@ -44,7 +44,6 @@ public class MainFragment extends Fragment  implements LoaderManager.LoaderCallb
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
@@ -128,6 +127,7 @@ public class MainFragment extends Fragment  implements LoaderManager.LoaderCallb
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+
                 Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
                 String sortby = "popular";
                 ((Callback) getActivity())

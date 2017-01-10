@@ -18,6 +18,7 @@
         android:textColor="@color/colorBlack"
         style="?android:attr/textAppearanceMedium"
         android:fontFamily="Roboto"
-        android:textSize="@dimen/image_title"/>
+        android:paddingStart="@dimen/margin_title"
+        android:paddingLeft="@dimen/margin_title" />
 
 </LinearLayout>

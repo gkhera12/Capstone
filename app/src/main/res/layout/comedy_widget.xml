@@ -30,6 +30,8 @@
                     android:padding="@dimen/widget_margin"
                     android:background="@color/cardview_dark_background"
                     android:src="@drawable/ic_play"
-                    android:scaleType="fitCenter"/>
+                    android:scaleType="fitCenter"
+                    android:contentDescription="@string/play"
+                    />
             </LinearLayout>
 </FrameLayout>

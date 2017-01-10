@@ -180,6 +180,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             String imageUrl = posterPath;
             Picasso.with(getActivity()).load(imageUrl)
                     .placeholder(R.mipmap.ic_launcher).into(imageView);
+            imageView.setContentDescription(title);
             int comedyId = (int) data.getLong(COL_COMEDY_COMEDY_ID);
             if(trailerList == null){
                 getTrailers(comedyId);
@@ -250,6 +251,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         playerView.setVisibility(View.VISIBLE);
         playPauseBtn.setImageDrawable(getContext().getDrawable(R.drawable.ic_pause));
         playerTitle.setText(event.getTitle());
+        playerTitle.setContentDescription(event.getTitle());
         String url = event.getUrl();
         Uri radioUri = Uri.parse(url);
         // Settings for exoPlayer

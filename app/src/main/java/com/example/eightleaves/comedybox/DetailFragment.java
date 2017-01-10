@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -52,10 +53,10 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 
-public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener{
+public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
     static final String DETAIL_URI = "URI";
     private Uri mUri;
-    private static final int DETAIL_LOADER=1;
+    private static final int DETAIL_LOADER = 1;
     private ImageView imageView;
     private TextView titleText;
     private TextView releaseDateText;
@@ -100,6 +101,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             CBContract.SortEntry.COLUMN_SORT_SETTING
     };
     private int currentPosition;
+    private AsyncTask<String, Void, Integer> mTask;
 
     public DetailFragment() {
         // Required empty public constructor
@@ -108,10 +110,11 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     }
 
     @Override
-    public void onDestroy(){
+    public void onDestroy() {
         ComedyBus.getInstance().unregister(this);
         super.onDestroy();
     }
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -128,14 +131,14 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         // Inflate the layout for this fragment
         setHasOptionsMenu(true);
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
-        imageView = (ImageView)rootView.findViewById(R.id.list_item_comedy_image);
+        imageView = (ImageView) rootView.findViewById(R.id.list_item_comedy_image);
         titleText = (TextView) rootView.findViewById(R.id.list_item_comedy_title);
-        trailersListView = (RecyclerView)rootView.findViewById(R.id.list_item_comedy_trailers_list);
-        if(savedInstanceState != null && savedInstanceState.containsKey(TRAILERS_KEY)){
+        trailersListView = (RecyclerView) rootView.findViewById(R.id.list_item_comedy_trailers_list);
+        if (savedInstanceState != null && savedInstanceState.containsKey(TRAILERS_KEY)) {
             trailerList = savedInstanceState.getParcelableArrayList(TRAILERS_KEY);
             setupTrailerRecyclerView();
         }
-        MobileAds.initialize(getContext(),getString(R.string.banner_ad_unit_id));
+        MobileAds.initialize(getContext(), getString(R.string.banner_ad_unit_id));
         AdView mAdView = (AdView) rootView.findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder()
                 .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
@@ -175,7 +178,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        if ( null != mUri ) {
+        if (null != mUri) {
             return new CursorLoader(
                     getActivity(),
                     mUri,
@@ -190,7 +193,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        if(data !=null && data.moveToFirst()) {
+        if (data != null && data.moveToFirst()) {
             mCursor = data;
             String title = data.getString(COL_COMEDY_TITLE);
             titleText.setText(title);
@@ -200,21 +203,21 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                     .placeholder(R.mipmap.ic_launcher).into(imageView);
             imageView.setContentDescription(title);
             int comedyId = (int) data.getLong(COL_COMEDY_COMEDY_ID);
-            if(trailerList == null){
+            if (trailerList == null) {
                 getTrailers(comedyId);
             }
         }
     }
 
     @Override
-    public void onPause(){
+    public void onPause() {
         super.onPause();
-        if(exoPlayer.isPlayWhenReadyCommitted()){
+        if (exoPlayer.isPlayWhenReadyCommitted()) {
             exoPlayer.release();
         }
     }
 
-    private void getTrailers(int comedyId){
+    private void getTrailers(int comedyId) {
         comedyDataUpdator = new CBDataUpdator(getContext());
         executor = new EventExecutor(getContext());
         GetTrailersEvent event = new GetTrailersEvent();
@@ -228,12 +231,12 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     }
 
     @Subscribe
-    public void getTrailersResult(GetTrailersResultEvent event){
+    public void getTrailersResult(GetTrailersResultEvent event) {
         trailerList = event.getTrailersResult().getResults();
         if (getActivity() != null) {
             if (!trailerList.isEmpty() && trailerList != null) {
                 setupTrailerRecyclerView();
-                for(Trailer trailer: trailerList){
+                for (Trailer trailer : trailerList) {
                 }
             }
         }
@@ -265,7 +268,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Subscribe
-    public void processPlayTrailerEvent(PlayTrailerEvent event){
+    public void processPlayTrailerEvent(PlayTrailerEvent event) {
         playerView.setVisibility(View.VISIBLE);
         playPauseBtn.setImageDrawable(getContext().getDrawable(R.drawable.ic_pause));
         playerTitle.setText(event.getTitle());
@@ -280,13 +283,13 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                 radioUri, dataSource, allocator, BUFFER_SEGMENT_SIZE * BUFFER_SEGMENT_COUNT);
         audioRenderer = new MediaCodecAudioTrackRenderer(sampleSource);
 // Prepare ExoPlayer
-        if(exoPlayer.isPlayWhenReadyCommitted()){
+        if (exoPlayer.isPlayWhenReadyCommitted()) {
             exoPlayer.release();
             exoPlayer = ExoPlayer.Factory.newInstance(1);
         }
         exoPlayer.prepare(audioRenderer);
         exoPlayer.setPlayWhenReady(true);
-        isPlaying=true;
+        isPlaying = true;
         seekBar.setMax(100);
         updateSeekBar();
     }
@@ -296,9 +299,9 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if(exoPlayer != null && isPlaying){
-                    int mCurrentPosition = (int) (exoPlayer.getCurrentPosition()/exoPlayer.getDuration() * 100);
-                    seekBar.setProgress(mCurrentPosition);
+                if (exoPlayer != null && isPlaying) {
+                    float mCurrentPosition = ((float) exoPlayer.getCurrentPosition() / exoPlayer.getDuration() * 100);
+                    seekBar.setProgress((int) mCurrentPosition);
                 }
                 mHandler.postDelayed(this, 1000);
             }
@@ -308,13 +311,13 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.btn_play:
-                if(isPlaying){
+                if (isPlaying) {
                     isPlaying = false;
                     exoPlayer.setPlayWhenReady(false);
                     playPauseBtn.setImageDrawable(getContext().getDrawable(R.drawable.ic_play_arrow_black_24dp));
-                }else{
+                } else {
                     isPlaying = true;
                     exoPlayer.setPlayWhenReady(true);
                     playPauseBtn.setImageDrawable(getContext().getDrawable(R.drawable.ic_pause));
@@ -328,21 +331,21 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                 break;
             case R.id.btn_next:
                 currentPosition++;
-                if(currentPosition >=0 && currentPosition <trailerList.size()){
+                if (currentPosition >= 0 && currentPosition < trailerList.size()) {
                     Trailer nextTrailer = trailerList.get(currentPosition);
                     playTrailer(nextTrailer);
-                }else{
+                } else {
                     currentPosition--;
                     //todo error
                 }
                 break;
             case R.id.btn_previous:
                 currentPosition--;
-                if(currentPosition < trailerList.size() && currentPosition >= 0){
+                if (currentPosition < trailerList.size() && currentPosition >= 0) {
                     Trailer previousTrailer = trailerList.get(currentPosition);
                     playTrailer(previousTrailer);
 
-                }else{
+                } else {
                     currentPosition++;
                     //todo error
                 }

@@ -65,6 +65,7 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.ViewHold
                 PlayTrailerEvent event = new PlayTrailerEvent();
                 event.setTitle(mValues.get(position).getName());
                 event.setUrl(mValues.get(position).getSite());
+                event.setPosition(position);
                 ComedyBus.getInstance().post(event);
             }
         });

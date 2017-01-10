@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.app.ShareCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.RecyclerView;
@@ -17,6 +18,7 @@ import android.support.v7.widget.ShareActionProvider;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -41,6 +43,7 @@ import com.google.android.exoplayer.util.Util;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.formats.NativeAd;
 import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
 
@@ -68,8 +71,12 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     private static final int BUFFER_SEGMENT_COUNT = 256;
     private MediaCodecAudioTrackRenderer audioRenderer;
     private ImageView playPauseBtn;
+    private ImageView prevButton;
+    private ImageView nextButton;
     private TextView playerTitle;
     private boolean isPlaying = false;
+    ImageButton share;
+
     static final int COL_COMEDY_ID = 0;
     static final int COL_COMEDY_COMEDY_ID = 1;
     private static final int COL_COMEDY_POSTER_PATH = 2;
@@ -88,6 +95,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             CBContract.ComedyEntry.COLUMN_SORT_KEY,
             CBContract.SortEntry.COLUMN_SORT_SETTING
     };
+    private int currentPosition;
 
     public DetailFragment() {
         // Required empty public constructor
@@ -133,8 +141,13 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         playerView = (LinearLayout) rootView.findViewById(R.id.player_layout);
         playPauseBtn = (ImageView) rootView.findViewById(R.id.btn_play);
         playPauseBtn.setOnClickListener(this);
-
+        nextButton = (ImageView) rootView.findViewById(R.id.btn_next);
+        prevButton = (ImageView) rootView.findViewById(R.id.btn_previous);
         playerTitle = (TextView) rootView.findViewById(R.id.title_text);
+        nextButton.setOnClickListener(this);
+        prevButton.setOnClickListener(this);
+        share = (ImageButton) rootView.findViewById(R.id.btn_share);
+        share.setOnClickListener(this);
         return rootView;
     }
 
@@ -248,12 +261,13 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Subscribe
     public void processPlayTrailerEvent(PlayTrailerEvent event){
+        exoPlayer.release();
         playerView.setVisibility(View.VISIBLE);
         playPauseBtn.setImageDrawable(getContext().getDrawable(R.drawable.ic_pause));
         playerTitle.setText(event.getTitle());
         playerTitle.setContentDescription(event.getTitle());
-        String url = event.getUrl();
-        Uri radioUri = Uri.parse(url);
+        currentPosition = event.getPosition();
+        Uri radioUri = Uri.parse(event.getUrl());
         // Settings for exoPlayer
         Allocator allocator = new DefaultAllocator(BUFFER_SEGMENT_SIZE);
         String userAgent = Util.getUserAgent(getContext(), getString(R.string.app_name));
@@ -281,8 +295,45 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                     exoPlayer.setPlayWhenReady(true);
                     playPauseBtn.setImageDrawable(getContext().getDrawable(R.drawable.ic_pause));
                 }
+                break;
+            case R.id.btn_share:
+                startActivity(Intent.createChooser(ShareCompat.IntentBuilder.from(getActivity())
+                        .setType("text/plain")
+                        .setText("Some sample text")
+                        .getIntent(), trailerList.get(currentPosition).getSite()));
+                break;
+            case R.id.btn_next:
+                currentPosition++;
+                if(currentPosition >=0 && currentPosition <trailerList.size()){
+                    Trailer nextTrailer = trailerList.get(currentPosition);
+                    playTrailer(nextTrailer);
+                }else{
+                    currentPosition--;
+                    //todo error
+                }
+                break;
+            case R.id.btn_previous:
+                currentPosition--;
+                if(currentPosition < trailerList.size() && currentPosition >= 0){
+                    Trailer previousTrailer = trailerList.get(currentPosition);
+                    playTrailer(previousTrailer);
+
+                }else{
+                    currentPosition++;
+                    //todo error
+                }
+                break;
+
         }
         comedyDataUpdator = new CBDataUpdator(getContext());
         executor = new EventExecutor(getContext());
+    }
+
+    private void playTrailer(Trailer trailer) {
+        PlayTrailerEvent event = new PlayTrailerEvent();
+        event.setPosition(currentPosition);
+        event.setTitle(trailer.getName());
+        event.setUrl(trailer.getSite());
+        ComedyBus.getInstance().post(event);
     }
 }

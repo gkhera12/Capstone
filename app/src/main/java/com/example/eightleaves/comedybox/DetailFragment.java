@@ -79,6 +79,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     private SeekBar seekBar;
     private boolean isPlaying = false;
     ImageButton share;
+    private Handler mHandler;
 
     static final int COL_COMEDY_ID = 0;
     static final int COL_COMEDY_COMEDY_ID = 1;
@@ -151,6 +152,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         prevButton.setOnClickListener(this);
         share = (ImageButton) rootView.findViewById(R.id.btn_share);
         share.setOnClickListener(this);
+        seekBar = (SeekBar) rootView.findViewById(R.id.seekBar);
         return rootView;
     }
 
@@ -285,6 +287,22 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         exoPlayer.prepare(audioRenderer);
         exoPlayer.setPlayWhenReady(true);
         isPlaying=true;
+        seekBar.setMax(100);
+        updateSeekBar();
+    }
+
+    private void updateSeekBar() {
+        mHandler = new Handler();
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(exoPlayer != null && isPlaying){
+                    int mCurrentPosition = (int) (exoPlayer.getCurrentPosition()/exoPlayer.getDuration() * 100);
+                    seekBar.setProgress(mCurrentPosition);
+                }
+                mHandler.postDelayed(this, 1000);
+            }
+        });
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)

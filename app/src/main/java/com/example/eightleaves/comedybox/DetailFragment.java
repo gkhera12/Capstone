@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -21,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.example.eightleaves.comedybox.adapter.TrailerAdapter;
@@ -74,6 +76,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     private ImageView prevButton;
     private ImageView nextButton;
     private TextView playerTitle;
+    private SeekBar seekBar;
     private boolean isPlaying = false;
     ImageButton share;
 
@@ -261,7 +264,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Subscribe
     public void processPlayTrailerEvent(PlayTrailerEvent event){
-        exoPlayer.release();
         playerView.setVisibility(View.VISIBLE);
         playPauseBtn.setImageDrawable(getContext().getDrawable(R.drawable.ic_pause));
         playerTitle.setText(event.getTitle());
@@ -276,6 +278,10 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                 radioUri, dataSource, allocator, BUFFER_SEGMENT_SIZE * BUFFER_SEGMENT_COUNT);
         audioRenderer = new MediaCodecAudioTrackRenderer(sampleSource);
 // Prepare ExoPlayer
+        if(exoPlayer.isPlayWhenReadyCommitted()){
+            exoPlayer.release();
+            exoPlayer = ExoPlayer.Factory.newInstance(1);
+        }
         exoPlayer.prepare(audioRenderer);
         exoPlayer.setPlayWhenReady(true);
         isPlaying=true;

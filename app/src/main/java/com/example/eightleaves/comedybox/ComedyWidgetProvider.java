@@ -1,11 +1,10 @@
 package com.example.eightleaves.comedybox;
 
-import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
-import android.widget.RemoteViews;
+import android.os.Bundle;
 
 
 /**
@@ -14,24 +13,25 @@ import android.widget.RemoteViews;
 
 public class ComedyWidgetProvider extends AppWidgetProvider {
 
+    @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        final int N = appWidgetIds.length;
+        context.startService(new Intent(context, ComedyWidgetIntentService.class));
+    }
 
-        // Perform this loop procedure for each App Widget that belongs to this provider
-        for (int i=0; i<N; i++) {
-            int appWidgetId = appWidgetIds[i];
+    @Override
+    public void onAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager,
+                                          int appWidgetId, Bundle newOptions) {
+        context.startService(new Intent(context, ComedyWidgetIntentService.class));
+    }
 
-            // Create an Intent to launch ExampleActivity
-            Intent intent = new Intent(context, MainActivity.class);
-            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
-
-            // Get the layout for the App Widget and attach an on-click listener
-            // to the button
-            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.comedy_widget);
-            views.setOnClickPendingIntent(R.id.btn_play, pendingIntent);
-
-            // Tell the AppWidgetManager to perform an update on the current app widget
-            appWidgetManager.updateAppWidget(appWidgetId, views);
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        super.onReceive(context, intent);
+        if(DetailFragment.ACTION_DATA_UPDATED.equals(intent.getAction())){
+            Intent widgetIntent = new Intent(context, ComedyWidgetIntentService.class);
+            widgetIntent.putExtra("title",intent.getStringExtra("title"));
+            widgetIntent.putExtra("isPlaying",intent.getBooleanExtra("isPlaying",false));
+            context.startService(widgetIntent);
         }
     }
 }

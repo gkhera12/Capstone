@@ -17,6 +17,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.ShareActionProvider;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +36,7 @@ import com.example.eightleaves.comedybox.events.GetTrailersEvent;
 import com.example.eightleaves.comedybox.events.GetTrailersResultEvent;
 import com.example.eightleaves.comedybox.events.PlayTrailerEvent;
 import com.example.eightleaves.comedybox.otto.ComedyBus;
+import com.google.android.exoplayer.ExoPlaybackException;
 import com.google.android.exoplayer.ExoPlayer;
 import com.google.android.exoplayer.MediaCodecAudioTrackRenderer;
 import com.google.android.exoplayer.extractor.ExtractorSampleSource;
@@ -46,15 +48,15 @@ import com.google.android.exoplayer.util.Util;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.formats.NativeAd;
 import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
 
-public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
+public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ExoPlayer.Listener {
     static final String DETAIL_URI = "URI";
+    public static final String ACTION_DATA_UPDATED = "com.example.eightleaves.comedybox.ACTION_DATA_UPDATED";
     private Uri mUri;
     private static final int DETAIL_LOADER = 1;
     private ImageView imageView;
@@ -81,6 +83,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     private boolean isPlaying = false;
     ImageButton share;
     private Handler mHandler;
+    private Runnable runnable;
 
     static final int COL_COMEDY_ID = 0;
     static final int COL_COMEDY_COMEDY_ID = 1;
@@ -145,6 +148,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                 .build();
         mAdView.loadAd(adRequest);
         exoPlayer = ExoPlayer.Factory.newInstance(1);
+        exoPlayer.addListener(this);
         playerView = (LinearLayout) rootView.findViewById(R.id.player_layout);
         playPauseBtn = (ImageView) rootView.findViewById(R.id.btn_play);
         playPauseBtn.setOnClickListener(this);
@@ -285,27 +289,38 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 // Prepare ExoPlayer
         if (exoPlayer.isPlayWhenReadyCommitted()) {
             exoPlayer.release();
+            if(mHandler != null){mHandler.removeCallbacks(runnable);}
             exoPlayer = ExoPlayer.Factory.newInstance(1);
         }
         exoPlayer.prepare(audioRenderer);
         exoPlayer.setPlayWhenReady(true);
+        exoPlayer.addListener(this);
         isPlaying = true;
         seekBar.setMax(100);
+        updateWidget(event.getTitle().toString(),true);
         updateSeekBar();
+    }
+
+    private void updateWidget(String title, boolean isPlaying) {
+        Intent dataUpdated = new Intent(ACTION_DATA_UPDATED);
+        dataUpdated.putExtra("title",title);
+        dataUpdated.putExtra("isPlaying",isPlaying);
+        getContext().sendBroadcast(dataUpdated);
     }
 
     private void updateSeekBar() {
         mHandler = new Handler();
-        getActivity().runOnUiThread(new Runnable() {
+        runnable = new Runnable() {
             @Override
             public void run() {
-                if (exoPlayer != null && isPlaying) {
+                if (exoPlayer != null && isPlaying && exoPlayer.getDuration()>0) {
                     float mCurrentPosition = ((float) exoPlayer.getCurrentPosition() / exoPlayer.getDuration() * 100);
                     seekBar.setProgress((int) mCurrentPosition);
                 }
                 mHandler.postDelayed(this, 1000);
             }
-        });
+        };
+        getActivity().runOnUiThread(runnable);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -362,5 +377,20 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         event.setTitle(trailer.getName());
         event.setUrl(trailer.getSite());
         ComedyBus.getInstance().post(event);
+    }
+
+    @Override
+    public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+        Log.i("***GK:",String.valueOf(playbackState));
+    }
+
+    @Override
+    public void onPlayWhenReadyCommitted() {
+
+    }
+
+    @Override
+    public void onPlayerError(ExoPlaybackException error) {
+
     }
 }

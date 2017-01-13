@@ -40,8 +40,7 @@ public class EventExecutor {
     }
 
 
-    @Subscribe
-    public void getComedyDataEvent(final GetComedyDataEvent event){
+    public void getComedyDataEvent(){
         methods.getComedyData(new Callback<ComedyResults>() {
             @Override
             public void success(ComedyResults comedyResults, Response response) {
@@ -60,7 +59,7 @@ public class EventExecutor {
 
     @Subscribe
     public void getTrailers(GetTrailersEvent event) {
-        methods.getTrailersData(Integer.valueOf(event.getComedyId()), new Callback<TrailersResult>() {
+        methods.getTrailersData(Integer.valueOf(event.getComedyId()), new Callback<TrailersResult>(){
             @Override
             public void success(TrailersResult reviewResults, Response response) {
                 GetTrailersResultEvent resultEvent = new GetTrailersResultEvent();

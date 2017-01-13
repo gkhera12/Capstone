@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.example.eightleaves.comedybox.sync.ComedySyncAdapter;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
@@ -16,6 +17,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Call
         setContentView(R.layout.activity_main);
         mTracker = ((ComedyApplication)getApplication()).getDefaultTracker();
         sendTrackingEvent();
+        ComedySyncAdapter.initializeSyncAdapter(this);
     }
 
     @Override

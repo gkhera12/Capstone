@@ -4,6 +4,12 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission
+        android:name="android.permission.READ_SYNC_SETTINGS"/>
+    <uses-permission
+        android:name="android.permission.WRITE_SYNC_SETTINGS"/>
+    <uses-permission
+        android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
 
     <meta-data android:name="com.google.android.gms.version"
         android:value="@integer/google_play_services_version" />
@@ -14,10 +20,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:name="ComedyApplication">
-        <provider
-            android:name=".data.CBProvider"
-            android:authorities="com.example.eightleaves.comedybox"></provider>
-
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -57,6 +59,33 @@
             </intent-filter>
         </receiver>
         <service android:name="com.google.android.gms.analytics.CampaignTrackingService" />
+        <service
+            android:name=".sync.ComedyAuthenticatorService"
+            >
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
+        </service>
+        <provider
+            android:authorities="@string/content_authority"
+            android:name=".data.CBProvider"
+            android:exported="false"
+            android:syncable="true" />
+        <!-- The SyncAdapter service -->
+        <service
+            android:name=".sync.ComedySyncService"
+            android:exported="true"
+            >
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter" />
+            </intent-filter>
+            <meta-data
+                android:name="android.content.SyncAdapter"
+                android:resource="@xml/syncadapter" />
+        </service>
 
     </application>
 

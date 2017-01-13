@@ -125,7 +125,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             mUri = arguments.getParcelable(DetailFragment.DETAIL_URI);
         }
         // Inflate the layout for this fragment
-        setHasOptionsMenu(true);
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
         imageView = (ImageView)rootView.findViewById(R.id.list_item_comedy_image);
         titleText = (TextView) rootView.findViewById(R.id.list_item_comedy_title);
@@ -231,10 +230,9 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         if (getActivity() != null) {
             if (!trailerList.isEmpty() && trailerList != null) {
                 setupTrailerRecyclerView();
-                for(Trailer trailer: trailerList){
-                }
             }
         }
+        executor.onDestroy();
     }
 
     private long addSortSetting(String sortSetting) {
@@ -331,8 +329,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                 break;
 
         }
-        comedyDataUpdator = new CBDataUpdator(getContext());
-        executor = new EventExecutor(getContext());
     }
 
     private void playTrailer(Trailer trailer) {

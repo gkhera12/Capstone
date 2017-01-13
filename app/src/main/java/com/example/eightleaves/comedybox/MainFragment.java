@@ -4,10 +4,12 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +20,7 @@ import android.widget.Toast;
 
 import com.example.eightleaves.comedybox.adapter.CBAdapter;
 import com.example.eightleaves.comedybox.data.CBContract;
+import com.example.eightleaves.comedybox.sync.ComedySyncAdapter;
 
 
 /**
@@ -28,7 +31,7 @@ import com.example.eightleaves.comedybox.data.CBContract;
  * Use the {@link MainFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MainFragment extends Fragment  implements LoaderManager.LoaderCallbacks<Cursor>{
+public class MainFragment extends Fragment  implements LoaderManager.LoaderCallbacks<Cursor>,View.OnClickListener{
 
     private GridView gridView;
     private CBAdapter cbAdapter;
@@ -56,6 +59,18 @@ public class MainFragment extends Fragment  implements LoaderManager.LoaderCallb
             CBContract.ComedyEntry.COLUMN_TITLE,
 
     };
+    private SwipeRefreshLayout swipeRefresh;
+    private View rootView;
+
+    @Override
+    public void onClick(View view) {
+        if(Utils.isNetworkAvailable(getContext())){
+            getLoaderManager().restartLoader(COMEDY_LOADER,null,this);
+            ComedySyncAdapter.syncImmediately(getContext());
+        }else{
+            Snackbar.make(rootView,getString(R.string.network_refresh),Snackbar.LENGTH_SHORT).show();
+        }
+    }
 
     public interface Callback {
         void onItemSelected(Uri Uri);
@@ -104,7 +119,7 @@ public class MainFragment extends Fragment  implements LoaderManager.LoaderCallb
         cbAdapter = new CBAdapter(getActivity(),null);
         cbAdapter.notifyDataSetChanged();
 
-        View rootView = inflater.inflate(R.layout.comedy_fragment, container, false);
+        rootView = inflater.inflate(R.layout.comedy_fragment, container, false);
         gridView = (GridView) rootView.findViewById(R.id.gridview);
         gridView.setAdapter(cbAdapter);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -118,6 +133,8 @@ public class MainFragment extends Fragment  implements LoaderManager.LoaderCallb
                         ));
             }
         });
+        swipeRefresh = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
+        swipeRefresh.setOnClickListener(this);
         return  rootView;
     }
 
@@ -151,9 +168,9 @@ public class MainFragment extends Fragment  implements LoaderManager.LoaderCallb
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         if(data == null || data.getCount()==0){
-            Toast.makeText(getContext(),"No data available, Try changing the Sort Order",
-                    Toast.LENGTH_SHORT).show();
+            Snackbar.make(rootView,getString(R.string.network_refresh),Snackbar.LENGTH_LONG).show();
         }
+        swipeRefresh.setRefreshing(false);
         cbAdapter.swapCursor(data);
     }
 

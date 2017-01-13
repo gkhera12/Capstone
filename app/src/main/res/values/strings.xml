@@ -20,4 +20,8 @@
     <string name="sync_account_type">comedybox.eightleaves.example.com</string>
     <string name="content_authority">com.example.eightleaves.comedybox</string>
     <string name="popular">popular</string>
+    <string name="network_error">Network connection not available</string>
+    <string name="retry">Retry</string>
+    <string name="no_data_available">Data not available</string>
+    <string name="network_refresh">Network not available. Please enable and refresh.</string>
 </resources>

@@ -35,7 +35,7 @@
                 android:value="com.example.eightleaves.comedybox.MainActivity" />
         </activity>
 
-        <receiver android:name=".ComedyWidgetProvider" >
+        <receiver android:name=".widget.ComedyWidgetProvider" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="com.example.eightleaves.comedybox.ACTION_DATA_UPDATED" />
@@ -44,7 +44,7 @@
                 android:resource="@xml/comedy_widget_info" />
         </receiver>
         <service
-            android:name="com.example.eightleaves.comedybox.ComedyWidgetIntentService"
+            android:name="com.example.eightleaves.comedybox.widget.ComedyWidgetIntentService"
             android:exported="false"/>
         <receiver android:name="com.google.android.gms.analytics.AnalyticsReceiver"
             android:enabled="true">

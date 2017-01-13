@@ -4,7 +4,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="comedy_box">ComedyBox</string>
-    <string name="endpoint">http://10.0.2.2:8080/_ah/api/comedyBox/v1/</string>
+    <!--<string name="endpoint">http://10.0.2.2:8080/_ah/api/comedyBox/v1/</string>-->
     <string name="trailers">Comedy Titles</string>
     <string name="trailer">Title</string>
     <string name="currently_playing_song">Currently Playing Song</string>
@@ -16,7 +16,7 @@
     <string name="previous">previous button</string>
     <string name="next">next</string>
     <string name="share">Share title</string>
-    <!--<string name="endpoint">https://comedybox-cdb90.appspot.com/_ah/api/comedyBox/v1/</string>-->
+    <string name="endpoint">https://comedybox-cdb90.appspot.com/_ah/api/comedyBox/v1/</string>
     <string name="sync_account_type">comedybox.eightleaves.example.com</string>
     <string name="content_authority">com.example.eightleaves.comedybox</string>
     <string name="network_error">Network connection not available</string>

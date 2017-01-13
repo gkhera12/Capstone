@@ -116,9 +116,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public void onDestroy() {
         ComedyBus.getInstance().unregister(this);
-        if(executor!= null){
-            executor.onDestroy();
-        }
         super.onDestroy();
     }
 
@@ -228,7 +225,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         if (Utils.isNetworkAvailable(getContext())) {
             GetTrailersEvent event = new GetTrailersEvent();
             event.setComedyId(comedyId);
-            ComedyBus.getInstance().post(event);
+            executor.getTrailers(event);
         }else{
         Snackbar.make(rootView,getString(R.string.network_error),Snackbar.LENGTH_INDEFINITE)
                 .setAction(R.string.retry, new View.OnClickListener() {

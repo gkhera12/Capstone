@@ -23,7 +23,6 @@ public class EventExecutor {
     private ComedyApiMethods methods;
     private String COMEDY_BASE_URL;
     public EventExecutor(Context context){
-        ComedyBus.getInstance().register(this);
         Gson gson = new GsonBuilder()
                 .disableHtmlEscaping()
                 .setPrettyPrinting()

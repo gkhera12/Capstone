@@ -22,4 +22,5 @@
     <string name="network_error">Network connection not available</string>
     <string name="retry">Retry</string>
     <string name="no_data_available">Data not available</string>
+    <string name="network_refresh">Network not available. Please enable and refresh.</string>
 </resources>

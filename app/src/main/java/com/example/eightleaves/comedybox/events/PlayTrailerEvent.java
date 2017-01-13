@@ -6,6 +6,7 @@ package com.example.eightleaves.comedybox.events;
 public class PlayTrailerEvent {
     String title;
     String url;
+    int position;
 
     public String getTitle() {
         return title;
@@ -21,5 +22,13 @@ public class PlayTrailerEvent {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
     }
 }

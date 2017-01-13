@@ -15,7 +15,10 @@
         android:layout_width="match_parent"
         android:id="@+id/list_item_cb_text"
         android:text="test"
-        android:background="@color/colorIndigo"
-        android:textSize="@dimen/image_title"/>
+        android:textColor="@color/colorBlack"
+        style="?android:attr/textAppearanceMedium"
+        android:fontFamily="Roboto"
+        android:paddingStart="@dimen/margin_title"
+        android:paddingLeft="@dimen/margin_title" />
 
 </LinearLayout>

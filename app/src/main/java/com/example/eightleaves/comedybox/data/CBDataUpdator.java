@@ -26,14 +26,9 @@ public class CBDataUpdator {
 
     public CBDataUpdator(Context context) {
         mContext = context;
-        ComedyBus.getInstance().register(this);
     }
 
-    @Subscribe
-    public void updateComedyData(GetComedyDataResultEvent event){
-        addComedyData(event.getComedyResults(), event.getSortBy());
-        ComedyBus.getInstance().post(new ComedyUpdateSuccessEvent());
-    }
+
 
     private long addSortSetting(String sortSetting) {
         long sortSettingId;
@@ -59,7 +54,7 @@ public class CBDataUpdator {
         return sortSettingId;
     }
 
-    private void addComedyData(ComedyResults comedyResults, String sortBy) {
+    public void addComedyData(ComedyResults comedyResults, String sortBy) {
         Vector<ContentValues> cVVector = new Vector<>(comedyResults.getResults().size());
         for(int i = 0; i < comedyResults.getResults().size(); i++) {
             String posterPath;
@@ -117,7 +112,4 @@ public class CBDataUpdator {
         }
     }
 
-    public void onDestroy(){
-        ComedyBus.getInstance().unregister(this);
-    }
 }

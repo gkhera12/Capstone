@@ -58,12 +58,14 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.ViewHold
     @Override
     public void onBindViewHolder(TrailerAdapter.ViewHolder holder, final int position) {
         holder.mTextView.setText(mValues.get(position).getName());
+        holder.mView.setContentDescription(mValues.get(position).getName());
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 PlayTrailerEvent event = new PlayTrailerEvent();
                 event.setTitle(mValues.get(position).getName());
                 event.setUrl(mValues.get(position).getSite());
+                event.setPosition(position);
                 ComedyBus.getInstance().post(event);
             }
         });

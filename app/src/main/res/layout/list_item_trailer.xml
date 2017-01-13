@@ -8,26 +8,31 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/list_item_trailer_image_icon"
-        android:src="@drawable/ic_play"
-        android:layout_marginTop="32dp"
-        android:layout_marginLeft="16dp" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/list_item_trailer_image_icon"
+            android:src="@drawable/ic_play"
+            android:layout_marginTop="@dimen/margin_top"
+            android:layout_marginStart="@dimen/margin_left"
+            android:contentDescription="@string/play"
+            android:layout_marginLeft="@dimen/margin_left" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/trailer"
+        android:fontFamily="Roboto"
+        android:textColor="@color/colorBlack"
         android:id="@+id/list_item_trailer_number"
-        android:layout_marginTop="32dp"
-        android:layout_marginLeft="16dp"/>
+        android:layout_marginTop="@dimen/margin_top"
+        android:layout_marginStart="@dimen/margin_left"
+        android:layout_marginLeft="@dimen/margin_left" />
     </LinearLayout>
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@android:color/darker_gray"
-        android:layout_marginTop="16dp" />
+        android:layout_marginTop="@dimen/margin_left" />
 
 </LinearLayout>

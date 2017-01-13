@@ -9,6 +9,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -17,11 +18,6 @@ import android.widget.Toast;
 
 import com.example.eightleaves.comedybox.adapter.CBAdapter;
 import com.example.eightleaves.comedybox.data.CBContract;
-import com.example.eightleaves.comedybox.data.CBDataUpdator;
-import com.example.eightleaves.comedybox.data.models.Comedy;
-import com.example.eightleaves.comedybox.events.EventExecutor;
-import com.example.eightleaves.comedybox.events.GetComedyDataEvent;
-import com.example.eightleaves.comedybox.otto.ComedyBus;
 
 
 /**
@@ -44,7 +40,6 @@ public class MainFragment extends Fragment  implements LoaderManager.LoaderCallb
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
@@ -105,14 +100,6 @@ public class MainFragment extends Fragment  implements LoaderManager.LoaderCallb
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         getLoaderManager().initLoader(COMEDY_LOADER, null, this);
-        updateComedyBox();
-    }
-
-    private void updateComedyBox() {
-        EventExecutor executor = new EventExecutor(getContext());
-        CBDataUpdator udpator = new CBDataUpdator(getContext());
-        GetComedyDataEvent event = new GetComedyDataEvent();
-        ComedyBus.getInstance().post(event);
     }
 
     @Override
@@ -128,6 +115,7 @@ public class MainFragment extends Fragment  implements LoaderManager.LoaderCallb
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+
                 Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
                 String sortby = "popular";
                 ((Callback) getActivity())

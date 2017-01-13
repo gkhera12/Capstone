@@ -41,35 +41,39 @@ public class EventExecutor {
 
 
     public void getComedyDataEvent(){
+        final GetComedyDataResultEvent resultEvent = new GetComedyDataResultEvent();
+        resultEvent.setSortBy("popular");
         methods.getComedyData(new Callback<ComedyResults>() {
             @Override
             public void success(ComedyResults comedyResults, Response response) {
-                GetComedyDataResultEvent resultEvent = new GetComedyDataResultEvent();
                 resultEvent.setComedyResults(comedyResults);
-                resultEvent.setSortBy("popular");
                 ComedyBus.getInstance().post(resultEvent);
             }
 
             @Override
             public void failure(RetrofitError error) {
-
+                ComedyResults results = new ComedyResults();
+                resultEvent.setComedyResults(results);
+                ComedyBus.getInstance().post(resultEvent);
             }
         });
     }
 
     @Subscribe
     public void getTrailers(GetTrailersEvent event) {
+        final GetTrailersResultEvent resultEvent = new GetTrailersResultEvent();
         methods.getTrailersData(Integer.valueOf(event.getComedyId()), new Callback<TrailersResult>(){
             @Override
             public void success(TrailersResult reviewResults, Response response) {
-                GetTrailersResultEvent resultEvent = new GetTrailersResultEvent();
                 resultEvent.setTrailersResult(reviewResults);
                 ComedyBus.getInstance().post(resultEvent);
             }
 
             @Override
             public void failure(RetrofitError error) {
-
+                TrailersResult results = new TrailersResult();
+                resultEvent.setTrailersResult(results);
+                ComedyBus.getInstance().post(resultEvent);
             }
         });
     }

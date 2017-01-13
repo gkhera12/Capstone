@@ -1,10 +1,12 @@
-package com.example.eightleaves.comedybox;
+package com.example.eightleaves.comedybox.widget;
 
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+
+import com.example.eightleaves.comedybox.DetailFragment;
 
 
 /**

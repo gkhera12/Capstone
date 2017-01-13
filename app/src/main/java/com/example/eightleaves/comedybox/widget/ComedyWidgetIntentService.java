@@ -1,4 +1,4 @@
-package com.example.eightleaves.comedybox;
+package com.example.eightleaves.comedybox.widget;
 
 import android.annotation.TargetApi;
 import android.app.IntentService;
@@ -8,6 +8,9 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Build;
 import android.widget.RemoteViews;
+
+import com.example.eightleaves.comedybox.MainActivity;
+import com.example.eightleaves.comedybox.R;
 
 
 public class ComedyWidgetIntentService  extends IntentService{

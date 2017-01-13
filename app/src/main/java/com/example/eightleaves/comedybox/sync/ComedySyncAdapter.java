@@ -26,8 +26,10 @@ public class ComedySyncAdapter  extends AbstractThreadedSyncAdapter {
     public static final int SYNC_INTERVAL = 60 * 180;
     public static final int SYNC_FLEXTIME = SYNC_INTERVAL/3;
     private EventExecutor executor;
+    private CBDataUpdator udpator;
     public ComedySyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
+        udpator = new CBDataUpdator(getContext());
     }
 
     @Override
@@ -40,7 +42,6 @@ public class ComedySyncAdapter  extends AbstractThreadedSyncAdapter {
     @Subscribe
     public void updateComedyData(GetComedyDataResultEvent event){
         executor.onDestroy();
-        CBDataUpdator udpator = new CBDataUpdator(getContext());
         udpator.addComedyData(event.getComedyResults(), event.getSortBy());
         ComedyBus.getInstance().post(new ComedyUpdateSuccessEvent());
     }

@@ -33,15 +33,12 @@ public class MainFragment extends Fragment  implements LoaderManager.LoaderCallb
     private GridView gridView;
     private CBAdapter cbAdapter;
     private static final int COMEDY_LOADER =0;
-    private int mPosition = gridView.INVALID_POSITION;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String SORT_TYPE = "sort_type";
 
-    private String mParam1;
-    private String mParam2;
+    private String sortType;
 
     private OnFragmentInteractionListener mListener;
 
@@ -72,16 +69,13 @@ public class MainFragment extends Fragment  implements LoaderManager.LoaderCallb
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment MainFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static MainFragment newInstance(String param1, String param2) {
+    public static MainFragment newInstance(String sortType) {
         MainFragment fragment = new MainFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(SORT_TYPE, sortType);
         fragment.setArguments(args);
         return fragment;
     }
@@ -90,8 +84,9 @@ public class MainFragment extends Fragment  implements LoaderManager.LoaderCallb
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            sortType = getArguments().getString(SORT_TYPE);
+        }else{
+            sortType = getString(R.string.popular);
         }
 
     }
@@ -117,12 +112,10 @@ public class MainFragment extends Fragment  implements LoaderManager.LoaderCallb
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
 
                 Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
-                String sortby = "popular";
                 ((Callback) getActivity())
                         .onItemSelected(CBContract.ComedyEntry.buildComedySortWithComedyId(
-                                sortby, cursor.getInt(COL_COMEDY_COMEDY_ID)
+                                sortType, cursor.getInt(COL_COMEDY_COMEDY_ID)
                         ));
-                mPosition = position;
             }
         });
         return  rootView;
@@ -150,7 +143,7 @@ public class MainFragment extends Fragment  implements LoaderManager.LoaderCallb
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String sortOrder = CBContract.ComedyEntry.COLUMN_COMEDY_ID + " ASC";
         Uri comedyForSortSettingUri = CBContract.ComedyEntry.buildComedySort(
-                "popular");
+                sortType);
         return new CursorLoader(getActivity(),comedyForSortSettingUri,COMEDY_COLUMNS,null,null,sortOrder);
 
     }

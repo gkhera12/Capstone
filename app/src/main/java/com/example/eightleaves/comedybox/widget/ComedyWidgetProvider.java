@@ -1,12 +1,19 @@
 package com.example.eightleaves.comedybox.widget;
 
+import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.TaskStackBuilder;
+import android.widget.RemoteViews;
 
+import com.example.eightleaves.comedybox.DetailActivity;
 import com.example.eightleaves.comedybox.DetailFragment;
+import com.example.eightleaves.comedybox.MainActivity;
+import com.example.eightleaves.comedybox.R;
 
 
 /**
@@ -17,7 +24,18 @@ public class ComedyWidgetProvider extends AppWidgetProvider {
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        context.startService(new Intent(context, ComedyWidgetIntentService.class));
+        for (int appWidgetId : appWidgetIds) {
+            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.comedy_widget);
+
+            // Create an Intent to launch MainActivity
+            Intent intent = new Intent(context, MainActivity.class);
+            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+            views.setOnClickPendingIntent(R.id.widget_title, pendingIntent);
+
+
+            // Tell the AppWidgetManager to perform an update on the current app widget
+            appWidgetManager.updateAppWidget(appWidgetId, views);
+        }
     }
 
     @Override
@@ -36,4 +54,5 @@ public class ComedyWidgetProvider extends AppWidgetProvider {
             context.startService(widgetIntent);
         }
     }
+
 }

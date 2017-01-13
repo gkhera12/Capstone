@@ -26,8 +26,14 @@ public class CBDataUpdator {
 
     public CBDataUpdator(Context context) {
         mContext = context;
+        ComedyBus.getInstance().register(this);
     }
 
+    @Subscribe
+    public void updateComedyData(GetComedyDataResultEvent event){
+        addComedyData(event.getComedyResults(), event.getSortBy());
+        ComedyBus.getInstance().unregister(this);
+    }
 
 
     private long addSortSetting(String sortSetting) {

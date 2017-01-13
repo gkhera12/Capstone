@@ -14,12 +14,7 @@ import android.util.Log;
 
 import com.example.eightleaves.comedybox.R;
 import com.example.eightleaves.comedybox.data.CBDataUpdator;
-import com.example.eightleaves.comedybox.events.ComedyUpdateSuccessEvent;
 import com.example.eightleaves.comedybox.events.EventExecutor;
-import com.example.eightleaves.comedybox.events.GetComedyDataEvent;
-import com.example.eightleaves.comedybox.events.GetComedyDataResultEvent;
-import com.example.eightleaves.comedybox.otto.ComedyBus;
-import com.squareup.otto.Subscribe;
 
 public class ComedySyncAdapter  extends AbstractThreadedSyncAdapter {
     public final String LOG_TAG = ComedySyncAdapter.class.getSimpleName();
@@ -29,7 +24,6 @@ public class ComedySyncAdapter  extends AbstractThreadedSyncAdapter {
     private CBDataUpdator udpator;
     public ComedySyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
-        udpator = new CBDataUpdator(getContext());
     }
 
     @Override
@@ -37,14 +31,10 @@ public class ComedySyncAdapter  extends AbstractThreadedSyncAdapter {
         Log.d(LOG_TAG, "onPerformSync Called.");
         executor = new EventExecutor(getContext());
         executor.getComedyDataEvent();
+        udpator = new CBDataUpdator(getContext());
     }
 
-    @Subscribe
-    public void updateComedyData(GetComedyDataResultEvent event){
-        executor.onDestroy();
-        udpator.addComedyData(event.getComedyResults(), event.getSortBy());
-        ComedyBus.getInstance().post(new ComedyUpdateSuccessEvent());
-    }
+
     /**
      * Helper method to have the sync adapter sync immediately
      * @param context The context used to access the account service

@@ -25,4 +25,5 @@
     <string name="no_data_available">Data not available</string>
     <string name="network_refresh">Network not available. Please enable and refresh.</string>
     <string name="favorite">favorite</string>
+    <string name="mark_favorite">Mark as favorite</string>
 </resources>

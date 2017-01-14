@@ -160,6 +160,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:clickable="true"
+        android:contentDescription="@string/mark_favorite"
         android:src="@drawable/ic_star_border_black_24dp"
         app:layout_anchor="@id/viewA"
         app:layout_anchorGravity="bottom|right|end"/>

@@ -19,4 +19,11 @@
     <string name="endpoint">https://comedybox-cdb90.appspot.com/_ah/api/comedyBox/v1/</string>
     <string name="sync_account_type">comedybox.eightleaves.example.com</string>
     <string name="content_authority">com.example.eightleaves.comedybox</string>
+    <string name="popular">popular</string>
+    <string name="network_error">Network connection not available</string>
+    <string name="retry">Retry</string>
+    <string name="no_data_available">Data not available</string>
+    <string name="network_refresh">Network not available. Please enable and refresh.</string>
+    <string name="favorite">favorite</string>
+    <string name="mark_favorite">Mark as favorite</string>
 </resources>

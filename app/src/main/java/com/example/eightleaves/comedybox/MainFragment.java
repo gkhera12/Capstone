@@ -4,10 +4,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +21,10 @@ import android.widget.Toast;
 
 import com.example.eightleaves.comedybox.adapter.CBAdapter;
 import com.example.eightleaves.comedybox.data.CBContract;
+import com.example.eightleaves.comedybox.data.models.Comedy;
+import com.example.eightleaves.comedybox.events.MarkFavouriteEvent;
+import com.example.eightleaves.comedybox.otto.ComedyBus;
+import com.example.eightleaves.comedybox.sync.ComedySyncAdapter;
 
 
 /**
@@ -28,21 +35,18 @@ import com.example.eightleaves.comedybox.data.CBContract;
  * Use the {@link MainFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MainFragment extends Fragment  implements LoaderManager.LoaderCallbacks<Cursor>{
+public class MainFragment extends Fragment  implements LoaderManager.LoaderCallbacks<Cursor>,View.OnClickListener{
 
     private GridView gridView;
     private CBAdapter cbAdapter;
     private static final int COMEDY_LOADER =0;
-    private int mPosition = gridView.INVALID_POSITION;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String SORT_TYPE = "sort_type";
 
-    private String mParam1;
-    private String mParam2;
-
+    private String sortType;
+    private Cursor mCursor ;
     private OnFragmentInteractionListener mListener;
 
     static final int COL_COMEDY_ID = 0;
@@ -59,6 +63,18 @@ public class MainFragment extends Fragment  implements LoaderManager.LoaderCallb
             CBContract.ComedyEntry.COLUMN_TITLE,
 
     };
+    private SwipeRefreshLayout swipeRefresh;
+    private View rootView;
+
+    @Override
+    public void onClick(View view) {
+        if(Utils.isNetworkAvailable(getContext())){
+            getLoaderManager().restartLoader(COMEDY_LOADER,null,this);
+            ComedySyncAdapter.syncImmediately(getContext());
+        }else{
+            Snackbar.make(rootView,getString(R.string.network_refresh),Snackbar.LENGTH_SHORT).show();
+        }
+    }
 
     public interface Callback {
         void onItemSelected(Uri Uri);
@@ -72,16 +88,13 @@ public class MainFragment extends Fragment  implements LoaderManager.LoaderCallb
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment MainFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static MainFragment newInstance(String param1, String param2) {
+    public static MainFragment newInstance(String sortType) {
         MainFragment fragment = new MainFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(SORT_TYPE, sortType);
         fragment.setArguments(args);
         return fragment;
     }
@@ -90,8 +103,9 @@ public class MainFragment extends Fragment  implements LoaderManager.LoaderCallb
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            sortType = getArguments().getString(SORT_TYPE);
+        }else{
+            sortType = getString(R.string.popular);
         }
 
     }
@@ -109,7 +123,7 @@ public class MainFragment extends Fragment  implements LoaderManager.LoaderCallb
         cbAdapter = new CBAdapter(getActivity(),null);
         cbAdapter.notifyDataSetChanged();
 
-        View rootView = inflater.inflate(R.layout.comedy_fragment, container, false);
+        rootView = inflater.inflate(R.layout.comedy_fragment, container, false);
         gridView = (GridView) rootView.findViewById(R.id.gridview);
         gridView.setAdapter(cbAdapter);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -117,14 +131,14 @@ public class MainFragment extends Fragment  implements LoaderManager.LoaderCallb
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
 
                 Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
-                String sortby = "popular";
                 ((Callback) getActivity())
                         .onItemSelected(CBContract.ComedyEntry.buildComedySortWithComedyId(
-                                sortby, cursor.getInt(COL_COMEDY_COMEDY_ID)
+                                sortType, cursor.getInt(COL_COMEDY_COMEDY_ID)
                         ));
-                mPosition = position;
             }
         });
+        swipeRefresh = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
+        swipeRefresh.setOnClickListener(this);
         return  rootView;
     }
 
@@ -150,17 +164,18 @@ public class MainFragment extends Fragment  implements LoaderManager.LoaderCallb
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String sortOrder = CBContract.ComedyEntry.COLUMN_COMEDY_ID + " ASC";
         Uri comedyForSortSettingUri = CBContract.ComedyEntry.buildComedySort(
-                "popular");
+                sortType);
         return new CursorLoader(getActivity(),comedyForSortSettingUri,COMEDY_COLUMNS,null,null,sortOrder);
 
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        mCursor = data;
         if(data == null || data.getCount()==0){
-            Toast.makeText(getContext(),"No data available, Try changing the Sort Order",
-                    Toast.LENGTH_SHORT).show();
+            Snackbar.make(rootView,getString(R.string.network_refresh),Snackbar.LENGTH_LONG).show();
         }
+        swipeRefresh.setRefreshing(false);
         cbAdapter.swapCursor(data);
     }
 

@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -35,6 +36,7 @@ import com.example.eightleaves.comedybox.data.models.Trailer;
 import com.example.eightleaves.comedybox.events.EventExecutor;
 import com.example.eightleaves.comedybox.events.GetTrailersEvent;
 import com.example.eightleaves.comedybox.events.GetTrailersResultEvent;
+import com.example.eightleaves.comedybox.events.MarkFavouriteEvent;
 import com.example.eightleaves.comedybox.events.PlayTrailerEvent;
 import com.example.eightleaves.comedybox.otto.ComedyBus;
 import com.google.android.exoplayer.ExoPlaybackException;
@@ -62,12 +64,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     private static final int DETAIL_LOADER = 1;
     private ImageView imageView;
     private TextView titleText;
-    private TextView releaseDateText;
     private RecyclerView trailersListView;
     private ArrayList<Trailer> trailerList;
-    private Cursor mCursor;
-    private ShareActionProvider mShareActionProvider;
-    private Intent mShareIntent;
     private EventExecutor executor;
     private CBDataUpdator comedyDataUpdator;
     private static final String TRAILERS_KEY = "trailers";
@@ -85,6 +83,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     ImageButton share;
     private Handler mHandler;
     private Runnable runnable;
+    private FloatingActionButton favorite;
+    private Cursor mCursor;
 
     static final int COL_COMEDY_ID = 0;
     static final int COL_COMEDY_COMEDY_ID = 1;
@@ -162,6 +162,21 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         seekBar = (SeekBar) rootView.findViewById(R.id.seekBar);
         comedyDataUpdator = new CBDataUpdator(getContext());
         executor = new EventExecutor(getContext());
+        favorite = (FloatingActionButton) rootView.findViewById(R.id.fab);
+        favorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MarkFavouriteEvent event = new MarkFavouriteEvent();
+                event.setSortBy(getString(R.string.favorite));
+                if(!mCursor.isClosed()){
+                    event.setPosterPath(mCursor.getString(COL_COMEDY_POSTER_PATH));
+                    event.setOverview(mCursor.getString(COL_COMEDY_OVERVIEW));
+                    event.setTitle(mCursor.getString(COL_COMEDY_TITLE));
+                    event.setId(mCursor.getString(COL_COMEDY_COMEDY_ID));
+                    ComedyBus.getInstance().post(event);
+                }
+            }
+        });
         return rootView;
     }
 
@@ -200,6 +215,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         if (data != null && data.moveToFirst()) {
+            mCursor = data;
             getTrailers(data);
         }
     }
@@ -213,7 +229,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     }
 
     private void getTrailers(final Cursor data) {
-        mCursor = data;
         String title = data.getString(COL_COMEDY_TITLE);
         titleText.setText(title);
         String posterPath = data.getString(COL_COMEDY_POSTER_PATH);

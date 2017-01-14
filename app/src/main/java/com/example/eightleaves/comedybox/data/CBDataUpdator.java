@@ -108,13 +108,13 @@ public class CBDataUpdator {
         comedyValues.put(CBContract.ComedyEntry.COLUMN_POSTER_PATH,event.getPosterPath());
         comedyValues.put(CBContract.ComedyEntry.COLUMN_OVERVIEW, event.getOverview());
         comedyValues.put(CBContract.ComedyEntry.COLUMN_TITLE, event.getTitle());
-        comedyValues.put(CBContract.ComedyEntry.COLUMN_RELEASE_DATE, event.getReleaseDate());
+        comedyValues.put(CBContract.ComedyEntry.COLUMN_RELEASE_DATE, "");
         comedyValues.put(CBContract.ComedyEntry.COLUMN_SORT_KEY, sortId);
 
         Uri inserted = mContext.getContentResolver().insert(CBContract.ComedyEntry.CONTENT_URI, comedyValues);
         if(inserted != null)
         {
-            Toast.makeText(mContext, "Favourite Movie Added", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, "Favourite Artist Added", Toast.LENGTH_SHORT).show();
         }
     }
 

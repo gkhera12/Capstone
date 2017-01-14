@@ -6,9 +6,7 @@ package com.example.eightleaves.comedybox.events;
 public class MarkFavouriteEvent {
     String posterPath;
     String overview;
-    String releaseDate;
     String title;
-    String voteAverage;
     String id;
     String sortBy;
 
@@ -28,28 +26,12 @@ public class MarkFavouriteEvent {
         this.overview = overview;
     }
 
-    public String getReleaseDate() {
-        return releaseDate;
-    }
-
-    public void setReleaseDate(String releaseDate) {
-        this.releaseDate = releaseDate;
-    }
-
     public String getTitle() {
         return title;
     }
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public String getVoteAverage() {
-        return voteAverage;
-    }
-
-    public void setVoteAverage(String voteAverage) {
-        this.voteAverage = voteAverage;
     }
 
     public String getId() {

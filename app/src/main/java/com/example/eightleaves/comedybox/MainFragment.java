@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -20,6 +21,9 @@ import android.widget.Toast;
 
 import com.example.eightleaves.comedybox.adapter.CBAdapter;
 import com.example.eightleaves.comedybox.data.CBContract;
+import com.example.eightleaves.comedybox.data.models.Comedy;
+import com.example.eightleaves.comedybox.events.MarkFavouriteEvent;
+import com.example.eightleaves.comedybox.otto.ComedyBus;
 import com.example.eightleaves.comedybox.sync.ComedySyncAdapter;
 
 
@@ -42,7 +46,7 @@ public class MainFragment extends Fragment  implements LoaderManager.LoaderCallb
     private static final String SORT_TYPE = "sort_type";
 
     private String sortType;
-
+    private Cursor mCursor ;
     private OnFragmentInteractionListener mListener;
 
     static final int COL_COMEDY_ID = 0;
@@ -167,6 +171,7 @@ public class MainFragment extends Fragment  implements LoaderManager.LoaderCallb
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        mCursor = data;
         if(data == null || data.getCount()==0){
             Snackbar.make(rootView,getString(R.string.network_refresh),Snackbar.LENGTH_LONG).show();
         }

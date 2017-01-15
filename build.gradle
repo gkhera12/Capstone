@@ -23,6 +23,3 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 
-task installRelease(dependsOn:["app:assembleRelease",":app:installDebug"]){
-    doLast{println "Installing"}
-}
